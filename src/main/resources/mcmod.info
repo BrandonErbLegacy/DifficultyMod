@@ -1,0 +1,16 @@
+[
+{
+  "modid": "MODID",
+  "name": "MODNAME",
+  "description": "DESCRIPTION",
+  "version": "VERSION",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["NightWraid"],
+  "credits": "Credit to FatherToast for his mod SpecialAI. Several AI behaviors are modifications of those found in his mod :)",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]
