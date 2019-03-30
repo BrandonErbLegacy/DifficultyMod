@@ -1,6 +1,13 @@
 package nightwraid.diff.effects;
 
+import java.util.Random;
+
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.potion.PotionAbsorption;
+import net.minecraft.util.EnumParticleTypes;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
@@ -11,6 +18,8 @@ import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
 
 public interface ISpecialEffect {
+	public static Random rand = new Random();
+	
 	public default void OnEntityJoinedWorld(EntityJoinWorldEvent event, Integer diff) {
 		//System.out.println("A modded entity has joined the world - EffectBase");
 	}
@@ -45,5 +54,9 @@ public interface ISpecialEffect {
 	
 	public default void OnPlayerAttackedBy(LivingAttackEvent event, EntityLivingBase attacker, Integer diff) {
 		
-	}	
+	}
+	
+	public String GetName();
+	public int GetLevel();
+	public void AbilityUnlockHandler(EntityPlayer player, int difficulty);
 }

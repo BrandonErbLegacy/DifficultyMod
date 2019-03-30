@@ -1,4 +1,4 @@
-package nightwraid.diff.effects;
+package nightwraid.diff.effects.modifiers;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,14 +20,13 @@ import net.minecraft.world.World;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
-import nightwraid.diff.general.DifficultyConfigEntities;
+import nightwraid.diff.effects.ISpecialEffect;
+import nightwraid.diff.settings.EntityMysticSettings;
+import nightwraid.diff.settings.GeneralSettings;
+import nightwraid.diff.utils.LogHelper;
+import nightwraid.diff.utils.UnlockMessageHelper;
 
 public class SpecialEffectMystic implements ISpecialEffect {
-	//Capable of teleporting you -:)
-	//Capable of teleporting mobs to you -:)
-	//Capable of teleporting away to regen -:)
-	//Capable of blinding you
-	
 	protected static Random rand = new Random();
 	protected static List<EntityLivingBase> regeningEntities = new ArrayList<EntityLivingBase>();
 	protected static List<EntityLivingBase> hasUsedRetreat = new ArrayList<EntityLivingBase>();
@@ -35,11 +34,14 @@ public class SpecialEffectMystic implements ISpecialEffect {
 	protected static Map<EntityLivingBase, Integer> siegeTimers = new HashMap<EntityLivingBase, Integer>();
 	private static int maxNumberOfTPTries = 10; //Try to tp at most 10 times before failing
 	
+	public static String NAME = "Mystic";
+	public static int UNLOCKED_AT = EntityMysticSettings.levelMysticEnabled;
+	
 	@Override
 	public void OnEntityLivingUpdate(LivingUpdateEvent event, Integer diff) {
 		EntityLivingBase entity = event.getEntityLiving();
 		if (regeningEntities.contains(entity)) {
-			if ((entity.getHealth()/entity.getMaxHealth()) >= DifficultyConfigEntities.mysticMobsReengagePercent) {
+			if ((entity.getHealth()/entity.getMaxHealth()) >= EntityMysticSettings.retreatRegenUntilPercent) {
 				if (entity.getAttackingEntity() != null) {
 					teleportToEntity(entity, entity.getAttackingEntity());
 				}
@@ -56,16 +58,16 @@ public class SpecialEffectMystic implements ISpecialEffect {
 							if (currentTimer%10 == 0) {
 								//System.out.println("Siege timer tick: "+currentTimer);
 							}
-							if (currentTimer++ >= DifficultyConfigEntities.mysticSiegeDelay) {
+							if (currentTimer++ >= EntityMysticSettings.mysticSiegeDelay) {
 								//Perform a siege action
 								RecruitHelp(entity, true, diff);
 								siegeTimers.remove(entity);
 								hasUsedSiege.add(entity);
 							} else {
-								if (currentTimer == DifficultyConfigEntities.mysticSiegeWarn) {
+								if (currentTimer == EntityMysticSettings.mysticSiegeWarn) {
 									if (mob.getAttackTarget() instanceof EntityPlayer) {
 										EntityPlayer player = (EntityPlayer) mob.getAttackTarget();
-										player.sendMessage(new TextComponentString("A mystic mob is targeting you and will attack soon if you don't attack it first"));
+										player.sendMessage(new TextComponentString("A mystic "+entity.getName()+" is targeting you and will attack soon if you don't attack it first"));
 									}
 								}
 								siegeTimers.replace(entity, currentTimer);
@@ -86,16 +88,16 @@ public class SpecialEffectMystic implements ISpecialEffect {
 							if (currentTimer%10 == 0) {
 								//System.out.println("Siege timer tick: "+currentTimer);
 							}
-							if (currentTimer++ >= DifficultyConfigEntities.mysticSiegeDelay) {
+							if (currentTimer++ >= EntityMysticSettings.mysticSiegeDelay) {
 								//Perform a siege action
 								RecruitHelp(entity, true, diff);
 								siegeTimers.remove(entity);
 								hasUsedSiege.add(entity);
 							} else {
-								if (currentTimer == DifficultyConfigEntities.mysticSiegeWarn) {
+								if (currentTimer == EntityMysticSettings.mysticSiegeWarn) {
 									if (entity.getAttackingEntity() instanceof EntityPlayer) {
 										EntityPlayer player = (EntityPlayer) entity.getAttackingEntity();
-										player.sendMessage(new TextComponentString("A mystic mob is targeting you and will attack soon if you don't attack it first"));
+										player.sendMessage(new TextComponentString("A mystic "+entity.getName()+" is targeting you and will attack soon if you don't attack it first"));
 									}
 								}
 								siegeTimers.replace(entity, currentTimer);
@@ -112,9 +114,8 @@ public class SpecialEffectMystic implements ISpecialEffect {
 	
 	@Override
 	public void OnEntityLivingHurt(LivingHurtEvent event, Integer diff) {
-		//Apply regeneration effect for 5s (if not undead)
 		EntityLivingBase entity = event.getEntityLiving();
-		if ((entity.getHealth()/entity.getMaxHealth()) <= DifficultyConfigEntities.mysticMobsRetreatPercent) {
+		if ((entity.getHealth()/entity.getMaxHealth()) <= EntityMysticSettings.retreatAtPercent) {
 			AttemptToRunAndRegen(entity);
 			RecruitHelp(entity, false, diff);
 			hasUsedRetreat.add(entity);
@@ -143,14 +144,13 @@ public class SpecialEffectMystic implements ISpecialEffect {
 	
 	protected void RecruitHelp(EntityLivingBase entity, boolean teleportToTarget, Integer diff) {
 		if (!hasUsedRetreat.contains(entity)) {
-			System.out.println("Recruiting help");
 			World world = entity.getEntityWorld();
-			Integer al = DifficultyConfigEntities.mysticMobsRecruitRange;
+			Integer al = EntityMysticSettings.mysticMobsRecruitRange;
 			AxisAlignedBB bb = new AxisAlignedBB(entity.posX-al, entity.posY-al, entity.posZ-al,
 					entity.posX+al, entity.posY+al, entity.posZ+al);
 			List<Entity> ents = world.getEntitiesInAABBexcluding(entity, bb, null);
 			List<EntityLivingBase> recruitList = new ArrayList<EntityLivingBase>();
-			int allowedToRecruit = (int) Math.round(diff/DifficultyConfigEntities.mysticMobsRecruitedPerDiff);
+			int allowedToRecruit = (int) Math.round(diff/EntityMysticSettings.mysticMobsRecruitedPerDiff);
 			if (allowedToRecruit < 1) {
 				allowedToRecruit = 1;
 			}
@@ -158,7 +158,9 @@ public class SpecialEffectMystic implements ISpecialEffect {
 				if ((ent instanceof EntityLivingBase) && !(ent instanceof EntityPlayer)) {
 					if (recruitList.size() < allowedToRecruit) {
 						recruitList.add((EntityLivingBase) ent);
-						System.out.println("Adding "+ent.getName()+" to recruits");
+						if (GeneralSettings.debugModeEnabled) {
+							LogHelper.LogInfo("Adding "+ent.getName()+" to recruits");
+						}
 					} else {
 						break;
 					}
@@ -167,6 +169,10 @@ public class SpecialEffectMystic implements ISpecialEffect {
 			if (entity instanceof EntityMob) {
 				EntityMob mob = (EntityMob) entity;
 				EntityLivingBase target = mob.getAttackTarget();
+				if (target instanceof EntityPlayer) {
+					EntityPlayer player = (EntityPlayer) entity.getAttackingEntity();
+					player.sendMessage(new TextComponentString("A mystic "+entity.getName()+" has launched an attack on you!"));
+				}
 				if (target != null) {
 					for (EntityLivingBase ent:recruitList) {
 						if (teleportToEntity(ent, target) == false) {
@@ -181,6 +187,10 @@ public class SpecialEffectMystic implements ISpecialEffect {
 				}
 			} else {
 				EntityLivingBase target = entity.getAttackingEntity();
+				if (target instanceof EntityPlayer) {
+					EntityPlayer player = (EntityPlayer) entity.getAttackingEntity();
+					player.sendMessage(new TextComponentString("A mystic "+entity.getName()+" has launched an attack on you!"));
+				}
 				if (target != null) {
 					for (EntityLivingBase ent:recruitList) {
 						if (teleportToEntity(ent, target) == false) {
@@ -199,14 +209,13 @@ public class SpecialEffectMystic implements ISpecialEffect {
 	
 	protected void AttemptToRunAndRegen(EntityLivingBase entity) {
 		if (!hasUsedRetreat.contains(entity)) {
-			System.out.println("Retreat!");
 			//Flee at around 30% hp
 			teleportRandomly(entity);
 			if (entity.isEntityUndead()) {
 				return;
 			}
 			//Apply 5 seconds of regen
-			PotionEffect regen = new PotionEffect(Potion.getPotionById(10), 100); //Value may be ticks
+			PotionEffect regen = new PotionEffect(Potion.getPotionById(10), 800); //Value may be ticks
 			entity.addPotionEffect(regen);
 		}
 	}
@@ -270,4 +279,21 @@ public class SpecialEffectMystic implements ISpecialEffect {
 
         return flag;
     }
+
+	@Override
+	public String GetName() {
+		return NAME;
+	}
+
+	@Override
+	public int GetLevel() {
+		return UNLOCKED_AT;
+	}
+
+	@Override
+	public void AbilityUnlockHandler(EntityPlayer player, int difficulty) {
+		if (difficulty == UNLOCKED_AT) {
+			UnlockMessageHelper.SendAbilityUnlockMessage(player, NAME, "can now be spawned! These mobs are tricky. They will attempt to teleport away and regen HP if they get too low. Additionally they can teleport to you (bring nearby mobs) if you are out of their range for too long.");
+		}
+	}
 }

@@ -1,6 +1,6 @@
 package nightwraid.diff.commands;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import net.minecraft.command.CommandBase;
@@ -10,29 +10,23 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.PlayerList;
 import net.minecraft.util.text.TextComponentString;
-import nightwraid.diff.general.Utilities;
+import nightwraid.diff.general.DifficultyMod;
+import nightwraid.diff.utils.TagHelper;
 
 public class GetDifficultyLevelCommand extends CommandBase {
-	private final String COMMAND_NAME = "nwgetdiff";
-	private List<String> aliases;
-		
-	public GetDifficultyLevelCommand() {
-		aliases = new ArrayList();
-		aliases.add("nwgd");
-	}
-
-	public String getName() {
-		return COMMAND_NAME;
-	}
-
+	private final String CMD_NAME = "getdifficulty";
+	private String[] aliases = new String [] {
+		"nwgetdiff",
+		"nwgetdifficulty",
+		"gd",
+		"nwgd",
+	};
+	
+	
 	public String getUsage(ICommandSender sender) {
-		return "/nwgetdiff <PlayerName(Optional)>";
+		return "/getdifficulty <PlayerName (optional>";
 	}
-
-	public List<String> getAliases() {
-		return aliases;
-	}
-
+	
 	public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
 		Integer targetDifficulty = 0;
 		
@@ -45,9 +39,19 @@ public class GetDifficultyLevelCommand extends CommandBase {
 		
 		PlayerList players = server.getPlayerList();
 		EntityPlayerMP player = players.getPlayerByUsername(playerName);
-		Integer difficulty = Utilities.GetDifficultyFromTags(player.getTags());
+		Integer difficulty = DifficultyMod.pdh.GetPlayerDifficulty(player);
+		
 		sender.sendMessage(new TextComponentString(player.getName()+"'s difficulty is "+difficulty));
+	}	
+	
+	public String getName() {
+		return CMD_NAME;
 	}
+	
+	public List<String> getAliases(){
+		return Arrays.asList(aliases);
+	}
+	
 	@Override
 	public boolean checkPermission(MinecraftServer server, ICommandSender sender) {
 		// TODO Auto-generated method stub

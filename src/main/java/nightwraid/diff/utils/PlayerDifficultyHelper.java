@@ -1,24 +1,27 @@
-package nightwraid.diff.general;
+package nightwraid.diff.utils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.text.TextComponentString;
+import net.minecraft.world.World;
+import nightwraid.diff.effects.EffectManager;
+import nightwraid.diff.settings.GeneralSettings;
 
-public class PlayerDifficultyManager {
+public class PlayerDifficultyHelper {
 	public Map<EntityLiving, List<EntityPlayer>> DamagedEntitiesToPlayers = new HashMap<EntityLiving, List<EntityPlayer>>();
 	public Map<EntityPlayer, Integer> NormalEntitiesKilled = new HashMap<EntityPlayer, Integer>();
 	public Map<EntityPlayer, Integer> BossEntitiesKilled = new HashMap<EntityPlayer, Integer>();
-	public PlayerDifficultyManager() {
+	
+	public PlayerDifficultyHelper() {
 		
 	}
 	
-	public void AddIfNonePlayer(EntityPlayer player) {
+	public void SetupMapsForPlayer(EntityPlayer player) {
 		if (!NormalEntitiesKilled.containsKey(player)) {
 			NormalEntitiesKilled.put(player, 0);
 		}
@@ -27,19 +30,19 @@ public class PlayerDifficultyManager {
 		}
 	}
 	
+	
 	public void IncrementPlayerDifficulty(EntityPlayer player, String DiffIncreaseReason) {
 		int diff = GetPlayerDifficulty(player);
 		diff++;
 		SetPlayerDifficulty(player, diff);
-		String message = "You have increased your difficulty level to: "+GetPlayerDifficulty(player);
+		String message = "You have increased your difficulty level to: "+diff;
 		if (DiffIncreaseReason.equals("normies")) {
-			 message = "You have been involved in "+DifficultyConfigGeneral.playerNormalKillsDifficultyTick+" recent mob kills. Your difficulty has increased to: "+GetPlayerDifficulty(player);
+			 message = "§6[Level up!]§f You have been involved in §c"+GeneralSettings.playerNormalKillsDifficultyTick+"§f recent mob kills. Your difficulty has increased to: §9"+GetPlayerDifficulty(player);
 		} else if (DiffIncreaseReason.equals("bosses")) {
-			message = "You have been involved in "+DifficultyConfigGeneral.playerBossKillsDifficultyTick+" recent boss kills. Your difficulty has increased to: "+GetPlayerDifficulty(player);
+			message = "§6[Level up!]§f You have been involved in §c"+GeneralSettings.playerBossKillsDifficultyTick+"§f recent boss kills. Your difficulty has increased to: §9"+GetPlayerDifficulty(player);
 		}
-		
 		player.sendMessage(new TextComponentString(message));
-		
+		EffectManager.TriggerUnlockMessages(player, diff);
 		//System.out.println("Player "+player.getName()+" is receiving a new level");
 	}
 	
@@ -51,17 +54,17 @@ public class PlayerDifficultyManager {
 	
 	public void SetPlayerDifficulty(EntityPlayer player, Integer newDiff) {
 		Integer currentDiff = GetPlayerDifficulty(player);
-		String tag = "Challenge:"+currentDiff;
+		String tag = ModifierNames.MOB_LEVEL_DENOTATION+currentDiff;
 		player.removeTag(tag);
-		player.addTag("Challenge:"+newDiff);
+		player.addTag(ModifierNames.MOB_LEVEL_DENOTATION+newDiff);
 	}
 	
 	public int GetPlayerDifficulty(EntityPlayer player) {
-		Integer diff = Utilities.GetDifficultyFromTags(player.getTags());
+		Integer diff = TagHelper.GetDifficultyFromTags(player.getTags());
 		if (diff == null) {
 			//Make a new 
-			diff = DifficultyConfigGeneral.playerDefaultDifficultyTicks;
-			player.addTag("Challenge:"+diff);
+			diff = GeneralSettings.playerDefaultDifficultyTicks;
+			player.addTag(ModifierNames.MOB_LEVEL_DENOTATION+diff);
 		}
 		return diff;
 	}
@@ -87,14 +90,20 @@ public class PlayerDifficultyManager {
 		}
 	}
 	public void EntityDied(EntityLiving entity) {
-		//System.out.print(entity.getName()+" has died"+"\n");
+		if (entity == null || DamagedEntitiesToPlayers.containsKey(entity) == false) {
+			return;
+		}
 		List<EntityPlayer> list = DamagedEntitiesToPlayers.get(entity);
 		for (EntityPlayer player:list) {
+			//For Fake players and such?
+			if (!(player instanceof EntityPlayer)) {
+				continue;
+			}
 			if (entity.isNonBoss()) {
-				if (DifficultyConfigGeneral.allowDifficultyTickByNormal) {
+				if (GeneralSettings.allowDifficultyTickByNormal) {
 					Integer killedCount = NormalEntitiesKilled.get(player);
 					killedCount++;
-					if (killedCount >= DifficultyConfigGeneral.playerNormalKillsDifficultyTick) {
+					if (killedCount >= GeneralSettings.playerNormalKillsDifficultyTick) {
 						IncrementPlayerDifficulty(player, "normies");
 						killedCount = 0;
 					}
@@ -103,7 +112,7 @@ public class PlayerDifficultyManager {
 			} else {
 				Integer killedCount = BossEntitiesKilled.get(player);
 				killedCount++;
-				if (killedCount >= DifficultyConfigGeneral.playerBossKillsDifficultyTick) {
+				if (killedCount >= GeneralSettings.playerBossKillsDifficultyTick) {
 					IncrementPlayerDifficulty(player, "bosses");
 					killedCount = 0;
 				}
@@ -114,5 +123,11 @@ public class PlayerDifficultyManager {
 	}
 	public void RemoveEntity(EntityLiving entity) {
 		DamagedEntitiesToPlayers.remove(entity);
+	}
+	
+	public static void WorldAnnouncement(World world, String message) {
+		for (EntityPlayer player:world.playerEntities) {
+			player.sendMessage(new TextComponentString(message));
+		}
 	}
 }

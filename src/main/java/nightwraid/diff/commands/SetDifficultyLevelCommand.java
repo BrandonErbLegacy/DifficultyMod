@@ -1,6 +1,6 @@
 package nightwraid.diff.commands;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import net.minecraft.command.CommandBase;
@@ -9,36 +9,29 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.PlayerList;
+import net.minecraft.util.text.TextComponentString;
 import nightwraid.diff.general.DifficultyMod;
 
-public class ChangePlayerDifficultyCommand extends CommandBase {
-
-	private final String COMMAND_NAME = "nwsetplayerdiff";
-	private List<String> aliases;
-		
-	public ChangePlayerDifficultyCommand() {
-		aliases = new ArrayList();
-		aliases.add("nwspd");
-	}
-
-	public String getName() {
-		return COMMAND_NAME;
-	}
-
+public class SetDifficultyLevelCommand extends CommandBase {
+	private final String CMD_NAME = "setdifficulty";
+	private String[] aliases = new String [] {
+		"nwsetdiff",
+		"nwsetdifficulty",
+		"sd",
+		"nwsd",
+	};
+	
+	
 	public String getUsage(ICommandSender sender) {
-		return "/nwsetplayerdiff <NewDifficulty> <PlayerName(Optional)>";
+		return "/setdifficulty <NewDifficulty> <PlayerName (optional>";
 	}
-
-	public List<String> getAliases() {
-		return aliases;
-	}
-
+	
 	public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
 		Integer targetDifficulty = 0;
 		try {
 			targetDifficulty = Integer.parseInt(args[0]);
 		} catch (Exception ex) {
-			throw new CommandException(COMMAND_NAME, "Requires a difficulty at a minimum.");
+			throw new CommandException(CMD_NAME, "Requires a difficulty at a minimum.");
 		}
 		
 		String playerName = null;
@@ -50,8 +43,15 @@ public class ChangePlayerDifficultyCommand extends CommandBase {
 		
 		PlayerList players = server.getPlayerList();
 		EntityPlayerMP player = players.getPlayerByUsername(playerName);
-		DifficultyMod.pdm.SetPlayerDifficulty(player, targetDifficulty);
-
+		DifficultyMod.pdh.SetPlayerDifficulty(player, targetDifficulty);
+		sender.sendMessage(new TextComponentString(player.getName()+"'s new difficulty is "+targetDifficulty));
 	}
-
+	
+	public String getName() {
+		return CMD_NAME;
+	}
+	
+	public List<String> getAliases(){
+		return Arrays.asList(aliases);
+	}
 }
