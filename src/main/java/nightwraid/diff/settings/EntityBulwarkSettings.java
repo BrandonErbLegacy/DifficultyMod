@@ -10,8 +10,8 @@ import nightwraid.diff.general.DifficultyModConstants;
 @Config(modid = DifficultyModConstants.MODID, name="DifficultySettingsMods", category="Bulwark")
 public class EntityBulwarkSettings {
 	//Player Settings
-	@Config.Comment("The bulwark modifier becomes enabled at difficulty 5")
-	public static int levelBulwarkEnabled = 5;
+	@Config.Comment("The bulwark modifier becomes enabled at difficulty 20")
+	public static int levelBulwarkEnabled = 20;
 	
 	@Config.Comment("Bulwark creatures can have at most x% of their hp as absorption when they spawn (default: 50% (.5))")
 	public static double bulwarkAbsorptionCapped = .5;

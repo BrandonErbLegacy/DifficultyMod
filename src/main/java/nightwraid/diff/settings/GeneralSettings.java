@@ -15,7 +15,7 @@ public class GeneralSettings {
 	public static int playerDefaultDifficultyTicks = 0;
 	
 	@Config.Comment("This number of normal kills to increase difficulty")
-	public static int playerNormalKillsDifficultyTick = 2;
+	public static int playerNormalKillsDifficultyTick = 30;
 	
 	@Config.Comment("This number of boss kills to increase difficulty")
 	public static int playerBossKillsDifficultyTick = 2;
@@ -32,5 +32,5 @@ public class GeneralSettings {
 	
 	//Debug settings
 	@Config.Comment("Is the debugger activated?")
-	public static boolean debugModeEnabled = true;
+	public static boolean debugModeEnabled = false;
 }
