@@ -1,4 +1,4 @@
-# Difficulty by NightWraid
+# Difficulty by NightWraid (1.12)
 Making the world a more challenging place!
 
 ## Core Features
