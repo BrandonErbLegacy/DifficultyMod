@@ -10,6 +10,7 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
 import nightwraid.diff.commands.GetCurrentKillCounts;
+import nightwraid.diff.commands.GetCurrentKillsToLevel;
 import nightwraid.diff.commands.GetDifficultyLevelCommand;
 import nightwraid.diff.commands.GetLocalDifficultyLevelCommand;
 import nightwraid.diff.commands.SetDebugModeCommand;
@@ -48,6 +49,7 @@ public class DifficultyMod {
 	public void ServerStartingEvent(FMLServerStartingEvent event) {
 		event.registerServerCommand(new GetDifficultyLevelCommand());
 		event.registerServerCommand(new GetLocalDifficultyLevelCommand());
+		event.registerServerCommand(new GetCurrentKillsToLevel());
 		event.registerServerCommand(new GetCurrentKillCounts());
 		event.registerServerCommand(new SetDifficultyLevelCommand());
 		event.registerServerCommand(new SetDebugModeCommand());

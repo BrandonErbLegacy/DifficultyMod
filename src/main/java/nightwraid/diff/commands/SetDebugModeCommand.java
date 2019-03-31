@@ -15,6 +15,8 @@ import nightwraid.diff.settings.GeneralSettings;
 
 
 //Defaults to OP only
+//This command currently doesn't really work for some reason. Not sure why honestly.
+//It doesn't seem like the debug mode flag gets saved or used.
 public class SetDebugModeCommand extends CommandBase {
 	private final String CMD_NAME = "setdebugmode";
 	private String[] aliases = new String [] {

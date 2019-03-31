@@ -39,11 +39,10 @@ public class PlayerDifficultyHelper {
 		if (DiffIncreaseReason.equals("normies")) {
 			 message = "§6[Level up!]§f You have been involved in §c"+GeneralSettings.playerNormalKillsDifficultyTick+"§f recent mob kills. Your difficulty has increased to: §9"+GetPlayerDifficulty(player);
 		} else if (DiffIncreaseReason.equals("bosses")) {
-			message = "§6[Level up!]§f You have been involved in §c"+GeneralSettings.playerBossKillsDifficultyTick+"§f recent boss kills. Your difficulty has increased to: §9"+GetPlayerDifficulty(player);
+			 message = "§6[Level up!]§f You have been involved in §c"+GeneralSettings.playerBossKillsDifficultyTick+"§f recent boss kills. Your difficulty has increased to: §9"+GetPlayerDifficulty(player);
 		}
 		player.sendMessage(new TextComponentString(message));
 		EffectManager.TriggerUnlockMessages(player, diff);
-		//System.out.println("Player "+player.getName()+" is receiving a new level");
 	}
 	
 	public void DecrementPlayerDifficulty(EntityPlayer player) {
@@ -103,7 +102,7 @@ public class PlayerDifficultyHelper {
 				if (GeneralSettings.allowDifficultyTickByNormal) {
 					Integer killedCount = NormalEntitiesKilled.get(player);
 					killedCount++;
-					if (killedCount >= GeneralSettings.playerNormalKillsDifficultyTick) {
+					if (killedCount >= GetRequiredKillsPerLevel(player)) {
 						IncrementPlayerDifficulty(player, "normies");
 						killedCount = 0;
 					}
@@ -129,5 +128,13 @@ public class PlayerDifficultyHelper {
 		for (EntityPlayer player:world.playerEntities) {
 			player.sendMessage(new TextComponentString(message));
 		}
+	}
+	
+	public static int GetRequiredKillsPerLevel(int currentDiff) {
+		return (int) (GeneralSettings.playerNormalKillsDifficultyTick + Math.round(GeneralSettings.playerNormalKillIncreasePerTick * currentDiff));
+	}
+	
+	public static int GetRequiredKillsPerLevel(EntityPlayer player) {
+		return GetRequiredKillsPerLevel(TagHelper.GetDifficultyFromTags(player.getTags()));
 	}
 }
