@@ -15,7 +15,7 @@ Making the world a more challenging place!
 * Decaying
 * Wrathful
 
-# Hellspawn
+### Hellspawn
 Mobs of the hellspawn variety are immune to fire damage by default. They have several abilities they gain as you level up in difficulty. 
 
 
