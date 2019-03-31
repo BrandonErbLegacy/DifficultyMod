@@ -13,6 +13,7 @@ import nightwraid.diff.effects.modifiers.SpecialEffectDecaying;
 import nightwraid.diff.effects.modifiers.SpecialEffectHellspawn;
 import nightwraid.diff.effects.modifiers.SpecialEffectMystic;
 import nightwraid.diff.effects.modifiers.SpecialEffectRaidBoss;
+import nightwraid.diff.effects.modifiers.SpecialEffectSapping;
 import nightwraid.diff.effects.modifiers.SpecialEffectWrathful;
 import nightwraid.diff.effects.stats.StatGainHP;
 import nightwraid.diff.effects.stats.StatGainKRESIST;
@@ -39,6 +40,7 @@ public class EffectManager {
 		new SpecialEffectDecaying(),
 		new SpecialEffectMystic(), 
 		new SpecialEffectWrathful(),
+		new SpecialEffectSapping(),
 	};
 	private static ISpecialEquipment[] KnownEquipmentSets = new ISpecialEquipment[] {
 			

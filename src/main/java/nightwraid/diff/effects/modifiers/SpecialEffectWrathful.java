@@ -90,6 +90,5 @@ public class SpecialEffectWrathful implements ISpecialEffect {
 		if (difficulty == EntityWrathfulSettings.wrathfulLevelEnabled) {
 			UnlockMessageHelper.SendAbilityUnlockMessage(player, NAME, "can now be spawned! "+NAME+" mobs gain increasing speed and strength the lower on HP they get.");
 		}
-		
 	}
 }
