@@ -6,6 +6,7 @@ import java.util.Set;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.player.EntityPlayer;
 import nightwraid.diff.effects.EffectManager;
 import nightwraid.diff.effects.ISpecialEffect;
 
@@ -70,5 +71,9 @@ public class TagHelper {
 
 	public static boolean MobHasBeenModded(Entity entity) {
 		return MobHasBeenModded((EntityLiving) entity);
+	}
+	
+	public static boolean MobHasBeenModded(EntityPlayer player) {
+		return MobHasBeenModded(player.getTags());
 	}
 }

@@ -248,6 +248,10 @@ public class EntityEvents {
 			// If the target is a player, then apply any harmful effects that a mob with it's modifiers has (Like setting you on fire (Hellspawn))
 			if (ds != null) {
 				if (ds.getTrueSource() != null && ds.getTrueSource() instanceof EntityLivingBase) {
+					if (ds.getTrueSource() instanceof EntityPlayer) {
+						//Player attacking player.
+						return;
+					}
 					EntityLivingBase originator = (EntityLivingBase) ds.getTrueSource();
 					if (TagHelper.MobHasBeenModded(originator)) {
 						int diffSpawnedWith = TagHelper.GetDifficultyFromTags(originator.getTags());
