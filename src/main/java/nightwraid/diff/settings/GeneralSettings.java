@@ -17,6 +17,9 @@ public class GeneralSettings {
 	@Config.Comment("This number of normal kills to increase difficulty")
 	public static int playerNormalKillsDifficultyTick = 30;
 	
+	@Config.Comment("This is the amount the required kills per difficulty level increases every level")
+	public static double playerNormalKillIncreasePerTick = .5;
+	
 	@Config.Comment("This number of boss kills to increase difficulty")
 	public static int playerBossKillsDifficultyTick = 2;
 	
