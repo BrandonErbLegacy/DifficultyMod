@@ -1,11 +1,12 @@
 # Difficulty by NightWraid (1.12)
-Making the world a more challenging place!
+Making the world a more challenging place, one level at a time. 
 
 ## Core Features
 * Mob stats scale with difficulty level
 * Unlock special types of mob modifiers as you level
 * Difficulty level is unique per player. Not server based!
 * Players playing as a group have the difficulty of the world scale around them based on the highest difficulty in their vicinity
+* The majority of features (mob types, special attacks, levels things unlock, and more) can be disabled or modified in the configs!
 
 ## Mob Types
 * Hellspawn
