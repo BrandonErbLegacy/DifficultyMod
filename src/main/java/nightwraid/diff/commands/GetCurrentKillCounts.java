@@ -27,7 +27,7 @@ public class GetCurrentKillCounts extends CommandBase  {
 	
 	public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
 		for (EntityPlayer player:DifficultyMod.pdh.NormalEntitiesKilled.keySet()) {
-			sender.sendMessage(new TextComponentString("§6["+player.getName()+"]§f has "+DifficultyMod.pdh.NormalEntitiesKilled.get(player)+" kills"));
+			sender.sendMessage(new TextComponentString("\u00A76["+player.getName()+"]\u00A7f has "+DifficultyMod.pdh.NormalEntitiesKilled.get(player)+" kills"));
 		}
 	}	
 	

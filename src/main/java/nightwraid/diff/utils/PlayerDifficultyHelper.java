@@ -37,9 +37,9 @@ public class PlayerDifficultyHelper {
 		SetPlayerDifficulty(player, diff);
 		String message = "You have increased your difficulty level to: "+diff;
 		if (DiffIncreaseReason.equals("normies")) {
-			 message = "§6[Level up!]§f You have been involved in §c"+GeneralSettings.playerNormalKillsDifficultyTick+"§f recent mob kills. Your difficulty has increased to: §9"+GetPlayerDifficulty(player);
+			 message = "\u00A76[Level up!]\u00A7f You have been involved in \u00A7c"+GeneralSettings.playerNormalKillsDifficultyTick+"\u00A7f recent mob kills. Your difficulty has increased to: \u00A79"+GetPlayerDifficulty(player);
 		} else if (DiffIncreaseReason.equals("bosses")) {
-			 message = "§6[Level up!]§f You have been involved in §c"+GeneralSettings.playerBossKillsDifficultyTick+"§f recent boss kills. Your difficulty has increased to: §9"+GetPlayerDifficulty(player);
+			 message = "\u00A76[Level up!]\u00A7f You have been involved in \u00A7c"+GeneralSettings.playerBossKillsDifficultyTick+"\u00A7f recent boss kills. Your difficulty has increased to: \u00A79"+GetPlayerDifficulty(player);
 		}
 		player.sendMessage(new TextComponentString(message));
 		EffectManager.TriggerUnlockMessages(player, diff);

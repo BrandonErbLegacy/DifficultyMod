@@ -28,7 +28,7 @@ public class GetCurrentKillsToLevel extends CommandBase {
 	
 	public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
 		EntityPlayer player = sender.getEntityWorld().getPlayerEntityByName(sender.getName());
-		sender.sendMessage(new TextComponentString("§6["+player.getName()+"]§f will require "+DifficultyMod.pdh.GetRequiredKillsPerLevel(player)+" kills to level up"));
+		sender.sendMessage(new TextComponentString("\u00A76["+player.getName()+"]\u00A7f will require "+DifficultyMod.pdh.GetRequiredKillsPerLevel(player)+" kills to level up"));
 	}	
 	
 	public String getName() {

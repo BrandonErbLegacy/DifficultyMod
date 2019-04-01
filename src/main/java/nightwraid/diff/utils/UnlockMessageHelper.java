@@ -19,6 +19,6 @@ public class UnlockMessageHelper {
 		}
 	}
 	public static void SendAbilityUnlockMessage(EntityPlayer player, String mobName, String message) {
-		player.sendMessage(new TextComponentString("§6["+mobName+"]§f mobs "+message));
+		player.sendMessage(new TextComponentString("\u00A76["+mobName+"]\u00A7f mobs "+message));
 	}
 }
