@@ -294,38 +294,4 @@ public class EntityEvents {
 			}
 		}
 	}
-
-	//The last two events currently don't work right due to client/server sync things (I think)
-	@SubscribeEvent
-	public static void EntityRenderPre(RenderLivingEvent.Pre event) {
-		//LogHelper.LogInfo("PreRender event");
-		Entity entity = event.getEntity();
-		if (entity instanceof EntityLivingBase) {
-			IDifficulty diff = entity.getCapability(DifficultyProvider.DIFFICULTY_CAPABILITY, null);
-			LogHelper.LogInfo("Capability is null: "+(diff == null));
-			if (diff != null) {
-				LogHelper.LogInfo("Modifiers: "+diff.getModifiers().size());
-				if (diff.getModifiers().size() > 0) {
-	                GlStateManager.pushMatrix();
-	                GlStateManager.enableBlend();
-	                GlStateManager.blendFunc(GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
-	                GlStateManager.color(0.56f, 0.16f, 0.125f, 0.5f);
-				}
-			}
-		}
-	}
-	
-	@SubscribeEvent
-	public static void EntityRenderPost(RenderLivingEvent.Post event) {
-		Entity entity = event.getEntity();
-		if (entity instanceof EntityLivingBase) {
-			IDifficulty diff = entity.getCapability(DifficultyProvider.DIFFICULTY_CAPABILITY, null);
-			if (diff != null) {
-				if (diff.getModifiers().size() > 0) {
-	                GlStateManager.disableBlend();
-	                GlStateManager.popMatrix();
-				}
-			}
-		}
-	}
 }

@@ -22,6 +22,7 @@ import nightwraid.diff.effects.stats.StatGainKRESIST;
 import nightwraid.diff.effects.stats.StatGainSPD;
 import nightwraid.diff.effects.stats.StatGainSTR;
 import nightwraid.diff.general.DifficultyMod;
+import nightwraid.diff.network.DifficultySyncPacket;
 import nightwraid.diff.settings.EntitySettings;
 import nightwraid.diff.settings.GeneralSettings;
 import nightwraid.diff.utils.ModifierNames;
@@ -49,12 +50,16 @@ public class EffectManager {
 	
 	/* This method kicks everything off */
 	public static void AmpUpMob(EntityLiving entity, int difficulty) {
+		
+		//TODO: I'm 99% sure that these get reapplied now, with the change from the tag system to the capability system
+		//Investigate and removed the duplicated mod/stat bug
 		ApplyStats(entity, difficulty);
 		ApplyMods(entity, difficulty);
 		ApplyEquipment(entity, difficulty);
 		IDifficulty diff = entity.getCapability(DifficultyProvider.DIFFICULTY_CAPABILITY, null);
 		if (diff != null) {
 			diff.setDifficulty(difficulty);
+			DifficultyMod.network.sendToAll(new DifficultySyncPacket(entity, diff.getDifficulty(), diff.getModifiers()));
 		}
 	}
 	
