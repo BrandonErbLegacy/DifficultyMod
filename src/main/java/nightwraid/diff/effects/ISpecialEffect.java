@@ -2,12 +2,9 @@ package nightwraid.diff.effects;
 
 import java.util.Random;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.boss.EntityWither;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.potion.PotionAbsorption;
-import net.minecraft.util.EnumParticleTypes;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
@@ -22,6 +19,8 @@ public interface ISpecialEffect {
 	
 	public default void OnEntityJoinedWorld(EntityJoinWorldEvent event, Integer diff) {
 		//System.out.println("A modded entity has joined the world - EffectBase");
+		//EntityWither wither = new EntityWither(null);
+		
 	}
 
 	public default void OnEntityLivingDeath(LivingDeathEvent event, Integer diff) {
@@ -59,4 +58,5 @@ public interface ISpecialEffect {
 	public String GetName();
 	public int GetLevel();
 	public void AbilityUnlockHandler(EntityPlayer player, int difficulty);
+	//public final BossInfoServer bossInfo = (BossInfoServer)(new BossInfoServer(this.GetName(), BossInfo.Color.PURPLE, BossInfo.Overlay.PROGRESS)).setDarkenSky(true);
 }

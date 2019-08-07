@@ -14,4 +14,14 @@ public class PlayerEvents {
 			DifficultyMod.pdh.BossEntitiesKilled.put(event.player, 0);
 		}
 	}
+	
+	@SubscribeEvent
+	public static void PlayerLoggedOutEvent(PlayerEvent.PlayerLoggedOutEvent event) {
+		if (!DifficultyMod.pdh.NormalEntitiesKilled.containsKey(event.player)) {
+			DifficultyMod.pdh.NormalEntitiesKilled.remove(event.player);
+		} 
+		if (!DifficultyMod.pdh.BossEntitiesKilled.containsKey(event.player)) {
+			DifficultyMod.pdh.BossEntitiesKilled.remove(event.player);
+		}
+	}
 }

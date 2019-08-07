@@ -35,5 +35,5 @@ public class GeneralSettings {
 	
 	//Debug settings
 	@Config.Comment("Is the debugger activated?")
-	public static boolean debugModeEnabled = false;
+	public static boolean debugModeEnabled = true;
 }

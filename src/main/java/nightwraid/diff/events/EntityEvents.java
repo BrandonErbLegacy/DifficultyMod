@@ -1,7 +1,11 @@
 package nightwraid.diff.events;
 
 import java.util.List;
+import java.util.Set;
 
+import org.lwjgl.opengl.GL11;
+
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
@@ -12,6 +16,7 @@ import net.minecraft.entity.passive.IAnimals;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.DamageSource;
 import net.minecraft.world.World;
+import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
@@ -276,6 +281,34 @@ public class EntityEvents {
 				} catch (Exception ex) {
 					LogHelper.LogError("LivingEntityAttackEvent error encountered for: "+entity.getName()+" with modifier "+effect.GetName(), ex);
 				}
+			}
+		}
+	}
+
+	@SubscribeEvent
+	public static void EntityRenderPre(RenderLivingEvent.Pre event) {
+		LogHelper.LogInfo("PreRender event");
+		Entity entity = event.getEntity();
+		if (entity instanceof EntityLivingBase) {
+			boolean isModded = TagHelper.MobHasBeenModded(entity);
+			if (isModded) {
+				LogHelper.LogInfo("Spawned with color!");
+                GlStateManager.pushMatrix();
+                GlStateManager.enableBlend();
+                GlStateManager.blendFunc(GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
+                GlStateManager.color(0, 0, 0.0f, 1.0f);
+			}
+		}
+	}
+	
+	@SubscribeEvent
+	public static void EntityRenderPost(RenderLivingEvent.Post event) {
+		Entity entity = event.getEntity();
+		if (entity instanceof EntityLivingBase) {
+			boolean isModded = TagHelper.MobHasBeenModded(entity);
+			if (isModded) {
+                GlStateManager.disableBlend();
+                GlStateManager.popMatrix();
 			}
 		}
 	}

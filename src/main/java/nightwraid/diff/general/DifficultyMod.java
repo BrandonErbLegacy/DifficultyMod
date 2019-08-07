@@ -18,6 +18,7 @@ import nightwraid.diff.commands.SetDifficultyLevelCommand;
 import nightwraid.diff.commands.SpawnMobWithModifierCommand;
 import nightwraid.diff.events.EntityEvents;
 import nightwraid.diff.events.PlayerEvents;
+import nightwraid.diff.events.WorldEvents;
 import nightwraid.diff.utils.PlayerDifficultyHelper;
 
 @Mod(modid=DifficultyModConstants.MODID, name=DifficultyModConstants.MODNAME, version=DifficultyModConstants.VERSION, acceptedMinecraftVersions=DifficultyModConstants.ACCEPTED_MINECRAFT_VERSIONS)
@@ -33,6 +34,7 @@ public class DifficultyMod {
 		logger = event.getModLog();
 		MinecraftForge.EVENT_BUS.register(EntityEvents.class);
 		MinecraftForge.EVENT_BUS.register(PlayerEvents.class);
+		MinecraftForge.EVENT_BUS.register(WorldEvents.class);
 	}
 	
 	@EventHandler
