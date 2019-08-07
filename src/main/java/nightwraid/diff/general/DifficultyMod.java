@@ -1,6 +1,7 @@
 package nightwraid.diff.general;
 
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.Mod.Instance;
@@ -9,6 +10,10 @@ import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
+import nightwraid.diff.capabilities.DifficultyCapabilityFactory;
+import nightwraid.diff.capabilities.DifficultyCapabilityHandler;
+import nightwraid.diff.capabilities.DifficultyStorage;
+import nightwraid.diff.capabilities.IDifficulty;
 import nightwraid.diff.commands.GetCurrentKillCounts;
 import nightwraid.diff.commands.GetCurrentKillsToLevel;
 import nightwraid.diff.commands.GetDifficultyLevelCommand;
@@ -31,10 +36,15 @@ public class DifficultyMod {
 	
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
+		CapabilityManager.INSTANCE.register(IDifficulty.class, new DifficultyStorage(), new DifficultyCapabilityFactory());
+		
 		logger = event.getModLog();
 		MinecraftForge.EVENT_BUS.register(EntityEvents.class);
 		MinecraftForge.EVENT_BUS.register(PlayerEvents.class);
 		MinecraftForge.EVENT_BUS.register(WorldEvents.class);
+		
+		MinecraftForge.EVENT_BUS.register(new DifficultyCapabilityHandler());
+
 	}
 	
 	@EventHandler

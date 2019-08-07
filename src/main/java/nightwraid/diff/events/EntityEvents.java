@@ -1,7 +1,6 @@
 package nightwraid.diff.events;
 
 import java.util.List;
-import java.util.Set;
 
 import org.lwjgl.opengl.GL11;
 
@@ -23,6 +22,8 @@ import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import nightwraid.diff.capabilities.DifficultyProvider;
+import nightwraid.diff.capabilities.IDifficulty;
 import nightwraid.diff.effects.EffectManager;
 import nightwraid.diff.effects.ISpecialEffect;
 import nightwraid.diff.general.DifficultyMod;
@@ -45,6 +46,14 @@ public class EntityEvents {
 				// Players don't get buffs :)
 				return;
 			}
+			
+			//Test capability code
+			if (!entity.world.isRemote) {
+				IDifficulty testDiff = entity.getCapability(DifficultyProvider.DIFFICULTY_CAPABILITY, null);
+				LogHelper.LogInfo("Test diff is null: "+(testDiff == null));
+				LogHelper.LogInfo("Test difficulty of: "+testDiff.getDifficulty());
+			}
+			
 
 			Integer HighestDifficultyTick = 0;
 			World world = event.getWorld();
@@ -287,17 +296,17 @@ public class EntityEvents {
 
 	@SubscribeEvent
 	public static void EntityRenderPre(RenderLivingEvent.Pre event) {
-		LogHelper.LogInfo("PreRender event");
+		//LogHelper.LogInfo("PreRender event");
 		Entity entity = event.getEntity();
 		if (entity instanceof EntityLivingBase) {
 			boolean isModded = TagHelper.MobHasBeenModded(entity);
-			if (isModded) {
-				LogHelper.LogInfo("Spawned with color!");
+			//if (isModded) {
+				//LogHelper.LogInfo("Spawned with color!");
                 GlStateManager.pushMatrix();
                 GlStateManager.enableBlend();
                 GlStateManager.blendFunc(GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
-                GlStateManager.color(0, 0, 0.0f, 1.0f);
-			}
+                GlStateManager.color(0.56f, 0.16f, 0.125f, 0.5f);
+			//}
 		}
 	}
 	
@@ -306,10 +315,10 @@ public class EntityEvents {
 		Entity entity = event.getEntity();
 		if (entity instanceof EntityLivingBase) {
 			boolean isModded = TagHelper.MobHasBeenModded(entity);
-			if (isModded) {
+			//if (isModded) {
                 GlStateManager.disableBlend();
                 GlStateManager.popMatrix();
-			}
+			//}
 		}
 	}
 }
