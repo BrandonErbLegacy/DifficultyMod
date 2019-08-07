@@ -6,8 +6,6 @@ import java.util.List;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
@@ -15,8 +13,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import nightwraid.diff.effects.EffectManager;
 import nightwraid.diff.settings.GeneralSettings;
+import nightwraid.diff.utils.DifficultyCapabilityHelper;
 import nightwraid.diff.utils.ModifierNames;
-import nightwraid.diff.utils.TagHelper;
 import nightwraid.diff.utils.UnlockMessageHelper;
 
 public class SpawnMobWithModifierCommand extends CommandBase {
@@ -43,7 +41,7 @@ public class SpawnMobWithModifierCommand extends CommandBase {
 		int diff = 200;
 		for (EntityPlayer player:sender.getEntityWorld().playerEntities) {
 			if (player.getName() == sender.getName()) {
-				diff = TagHelper.GetDifficultyFromTags(player.getTags());
+				diff = DifficultyCapabilityHelper.GetEntityDifficulty(player);
 			}
 		}
 		

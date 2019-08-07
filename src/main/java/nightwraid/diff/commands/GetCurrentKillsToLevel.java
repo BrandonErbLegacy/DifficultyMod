@@ -10,7 +10,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.TextComponentString;
 import nightwraid.diff.general.DifficultyMod;
-import nightwraid.diff.utils.TagHelper;
 
 public class GetCurrentKillsToLevel extends CommandBase {
 	private final String CMD_NAME = "getkillstolevel";

@@ -8,6 +8,8 @@ import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.player.EntityPlayer;
+import nightwraid.diff.capabilities.DifficultyProvider;
+import nightwraid.diff.capabilities.IDifficulty;
 import nightwraid.diff.effects.modifiers.SpecialEffectBulwark;
 import nightwraid.diff.effects.modifiers.SpecialEffectDecaying;
 import nightwraid.diff.effects.modifiers.SpecialEffectHellspawn;
@@ -23,7 +25,6 @@ import nightwraid.diff.general.DifficultyMod;
 import nightwraid.diff.settings.EntitySettings;
 import nightwraid.diff.settings.GeneralSettings;
 import nightwraid.diff.utils.ModifierNames;
-import nightwraid.diff.utils.TagHelper;
 
 public class EffectManager {
 	/* Register our effects and etc for use */
@@ -51,8 +52,10 @@ public class EffectManager {
 		ApplyStats(entity, difficulty);
 		ApplyMods(entity, difficulty);
 		ApplyEquipment(entity, difficulty);
-		TagHelper.SetDifficultyFromEntity(entity, difficulty);
-		TagHelper.SetMobHasBeenModded(entity);
+		IDifficulty diff = entity.getCapability(DifficultyProvider.DIFFICULTY_CAPABILITY, null);
+		if (diff != null) {
+			diff.setDifficulty(difficulty);
+		}
 	}
 	
 	private static void ApplyMods(EntityLiving entity, int difficulty) {

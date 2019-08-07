@@ -54,21 +54,11 @@ public class PlayerDifficultyHelper {
 	}
 	
 	public void SetPlayerDifficulty(EntityPlayer player, Integer newDiff) {
-		Integer currentDiff = GetPlayerDifficulty(player);
-		String tag = ModifierNames.MOB_LEVEL_DENOTATION+currentDiff;
-		player.removeTag(tag);
-		player.addTag(ModifierNames.MOB_LEVEL_DENOTATION+newDiff);
+		DifficultyCapabilityHelper.SetEntityDifficulty(player, newDiff);
 	}
 	
 	public int GetPlayerDifficulty(EntityPlayer player) {
-		Integer diff = TagHelper.GetDifficultyFromTags(player.getTags());
-		if (diff == null) {
-			//Make a new 
-			diff = GeneralSettings.playerDefaultDifficultyTicks;
-			player.addTag(ModifierNames.MOB_LEVEL_DENOTATION+diff);
-		}
-		
-		return diff;
+		return DifficultyCapabilityHelper.GetEntityDifficulty(player);
 	}
 	
 	public void SetPlayerDamagedMob(EntityLiving entity, EntityPlayer player) {
@@ -138,6 +128,6 @@ public class PlayerDifficultyHelper {
 	}
 	
 	public static int GetRequiredKillsPerLevel(EntityPlayer player) {
-		return GetRequiredKillsPerLevel(TagHelper.GetDifficultyFromTags(player.getTags()));
+		return GetRequiredKillsPerLevel(DifficultyCapabilityHelper.GetEntityDifficulty(player));
 	}
 }

@@ -29,8 +29,8 @@ import nightwraid.diff.effects.ISpecialEffect;
 import nightwraid.diff.general.DifficultyMod;
 import nightwraid.diff.settings.EntitySettings;
 import nightwraid.diff.settings.GeneralSettings;
+import nightwraid.diff.utils.DifficultyCapabilityHelper;
 import nightwraid.diff.utils.LogHelper;
-import nightwraid.diff.utils.TagHelper;
 import nightwraid.diff.utils.UnlockMessageHelper;
 
 public class EntityEvents {
@@ -47,13 +47,7 @@ public class EntityEvents {
 				return;
 			}
 			
-			//Test capability code
-			if (!entity.world.isRemote) {
-				IDifficulty testDiff = entity.getCapability(DifficultyProvider.DIFFICULTY_CAPABILITY, null);
-				LogHelper.LogInfo("Test diff is null: "+(testDiff == null));
-				LogHelper.LogInfo("Test difficulty of: "+testDiff.getDifficulty());
-			}
-			
+			IDifficulty diff = entity.getCapability(DifficultyProvider.DIFFICULTY_CAPABILITY, null);
 
 			Integer HighestDifficultyTick = 0;
 			World world = event.getWorld();
@@ -73,7 +67,7 @@ public class EntityEvents {
 			if (HighestDifficultyTick > 0) {
 				// Only do this for mobs that haven't been touched already
 				// without this check, our handler would be run any time the mob is reloaded into the world
-				if (!TagHelper.MobHasBeenModded(entity)) {
+				if (diff != null) {
 					//Config setting for whether or not passive mobs can be modded. (Mobs, Animals, NPCs)
 					if (EntitySettings.canModPassiveMobs) {
 						if (entity instanceof IMob || entity instanceof IAnimals || entity instanceof INpc) {
@@ -84,7 +78,7 @@ public class EntityEvents {
 							EffectManager.AmpUpMob((EntityLiving) entity, HighestDifficultyTick);
 						}
 					}
-					List<ISpecialEffect> effects = TagHelper.GetSpecialEffectsFromEntity(entity);
+					List<ISpecialEffect> effects = DifficultyCapabilityHelper.GetSpecialEffectsFromEntity(entity);
 					if (effects.size() > 0) {
 						String name = "";
 						for (ISpecialEffect effect:effects) {
@@ -98,9 +92,9 @@ public class EntityEvents {
 
 			//Special effects have been applied via tags for new mobs, and existing ones.
 			//Retroactively apply the effects they need when spawned in
-			if (TagHelper.MobHasBeenModded(entity)) {
-				int diffSpawnedWith = TagHelper.GetDifficultyFromTags(entity.getTags());
-				for (ISpecialEffect effect:TagHelper.GetSpecialEffectsFromEntity(entity)) {
+			if (diff != null) {
+				int diffSpawnedWith = diff.getDifficulty();
+				for (ISpecialEffect effect:DifficultyCapabilityHelper.GetSpecialEffectsFromEntity(entity)) {
 					effect.OnEntityJoinedWorld(event, diffSpawnedWith);
 				}
 			}
@@ -129,9 +123,10 @@ public class EntityEvents {
 		}
 		EntityLiving entity = (EntityLiving) event.getEntityLiving();
 		
-		if (TagHelper.MobHasBeenModded(entity)) {
-			int diffSpawnedWith = TagHelper.GetDifficultyFromTags(entity.getTags());
-			for (ISpecialEffect effect:TagHelper.GetSpecialEffectsFromEntity(entity)) {
+		IDifficulty diff = entity.getCapability(DifficultyProvider.DIFFICULTY_CAPABILITY, null);
+		if (diff != null) {
+			int diffSpawnedWith = diff.getDifficulty();
+			for (ISpecialEffect effect:DifficultyCapabilityHelper.GetSpecialEffectsFromEntity(entity)) {
 				try {
 					effect.OnEntityLivingUpdate(event, diffSpawnedWith);
 				} catch (Exception ex) {
@@ -156,10 +151,11 @@ public class EntityEvents {
 				DifficultyMod.pdh.SetPlayerDamagedMob(entity, player);
 			}
 		}
-				
-		if (TagHelper.MobHasBeenModded(entity)) {
-			int diffSpawnedWith = TagHelper.GetDifficultyFromTags(entity.getTags());
-			for (ISpecialEffect effect:TagHelper.GetSpecialEffectsFromEntity(entity)) {
+		
+		IDifficulty diff = entity.getCapability(DifficultyProvider.DIFFICULTY_CAPABILITY, null);
+		if (diff != null) {
+			int diffSpawnedWith = diff.getDifficulty();
+			for (ISpecialEffect effect:DifficultyCapabilityHelper.GetSpecialEffectsFromEntity(entity)) {
 				try {
 					effect.OnEntityLivingHurt(event, diffSpawnedWith);
 				} catch (Exception ex) {
@@ -176,10 +172,11 @@ public class EntityEvents {
 			return;
 		}
 		EntityLiving entity = (EntityLiving) event.getEntityLiving();
-
-		if (TagHelper.MobHasBeenModded(entity)) {
-			int diffSpawnedWith = TagHelper.GetDifficultyFromTags(entity.getTags());
-			for (ISpecialEffect effect:TagHelper.GetSpecialEffectsFromEntity(entity)) {
+		
+		IDifficulty diff = entity.getCapability(DifficultyProvider.DIFFICULTY_CAPABILITY, null);
+		if (diff != null) {
+			int diffSpawnedWith = diff.getDifficulty();
+			for (ISpecialEffect effect:DifficultyCapabilityHelper.GetSpecialEffectsFromEntity(entity)) {
 				try {
 					effect.OnEntityLivingDeath(event, diffSpawnedWith);
 				} catch (Exception ex) {
@@ -189,12 +186,12 @@ public class EntityEvents {
 		}
 
 		// Do announcements if any
-		if (TagHelper.MobHasBeenModded(entity)) {
+		if (diff != null) {
 			if (DifficultyMod.pdh.DamagedEntitiesToPlayers.containsKey(entity) && event.isCanceled() == false) {
 				World world = entity.getEntityWorld();
 				String stringVersionTags = "";
 				
-				List<ISpecialEffect> effects = TagHelper.GetSpecialEffectsFromEntity(entity);
+				List<ISpecialEffect> effects = DifficultyCapabilityHelper.GetSpecialEffectsFromEntity(entity);
 				if (effects.size() > 0) {
 					for (int i=0;i<effects.size();i++) {
 						if (i == effects.size()-1) {
@@ -224,18 +221,18 @@ public class EntityEvents {
 					if (playerCount > 1) {
 						UnlockMessageHelper.WorldAnnouncement(world,
 								(players + " have slain a " + entity.getName() + " (" + stringVersionTags
-										+ ") at difficulty " + TagHelper.GetDifficultyFromTags(entity.getTags())));
+										+ ") at difficulty " + diff.getDifficulty()));
 					} else {
 						UnlockMessageHelper.WorldAnnouncement(world,
 								(players + " has slain a " + entity.getName() + " (" + stringVersionTags
-										+ ") at difficulty " + TagHelper.GetDifficultyFromTags(entity.getTags())));
+										+ ") at difficulty " + diff.getDifficulty()));
 					}
-					}
+				}
 
 				// Spawn xp for killing the mob
 				EntityXPOrb xp = new EntityXPOrb(entity.world);
-				xp.xpValue = TagHelper.GetDifficultyFromTags(entity.getTags())
-						* TagHelper.GetDifficultyFromTags(entity.getTags()) + 50;
+				xp.xpValue = diff.getDifficulty()
+						* diff.getDifficulty() + 50;
 				xp.setPosition(entity.posX, entity.posY, entity.posZ);
 				entity.world.spawnEntity(xp);
 			}
@@ -267,9 +264,10 @@ public class EntityEvents {
 						return;
 					}
 					EntityLivingBase originator = (EntityLivingBase) ds.getTrueSource();
-					if (TagHelper.MobHasBeenModded(originator)) {
-						int diffSpawnedWith = TagHelper.GetDifficultyFromTags(originator.getTags());
-						for (ISpecialEffect effect:TagHelper.GetSpecialEffectsFromEntity(originator)) {
+					IDifficulty diff = originator.getCapability(DifficultyProvider.DIFFICULTY_CAPABILITY, null);
+					if (diff != null) {
+						int diffSpawnedWith = diff.getDifficulty();
+						for (ISpecialEffect effect:DifficultyCapabilityHelper.GetSpecialEffectsFromEntity(originator)) {
 							try {
 								effect.OnPlayerAttackedBy(event, originator, diffSpawnedWith);
 							} catch (Exception ex) {
@@ -282,9 +280,10 @@ public class EntityEvents {
 			return;
 		}
 		EntityLiving entity = (EntityLiving) event.getEntityLiving();
-		if (TagHelper.MobHasBeenModded(entity)) {
-			int diffSpawnedWith = TagHelper.GetDifficultyFromTags(entity.getTags());
-			for (ISpecialEffect effect:TagHelper.GetSpecialEffectsFromEntity(entity)) {
+		IDifficulty diff = entity.getCapability(DifficultyProvider.DIFFICULTY_CAPABILITY, null);
+		if (diff != null) {
+			int diffSpawnedWith = diff.getDifficulty();
+			for (ISpecialEffect effect:DifficultyCapabilityHelper.GetSpecialEffectsFromEntity(entity)) {
 				try {
 					effect.OnEntityAttackEvent(event, diffSpawnedWith);
 				} catch (Exception ex) {
@@ -299,14 +298,15 @@ public class EntityEvents {
 		//LogHelper.LogInfo("PreRender event");
 		Entity entity = event.getEntity();
 		if (entity instanceof EntityLivingBase) {
-			boolean isModded = TagHelper.MobHasBeenModded(entity);
-			//if (isModded) {
-				//LogHelper.LogInfo("Spawned with color!");
-                GlStateManager.pushMatrix();
-                GlStateManager.enableBlend();
-                GlStateManager.blendFunc(GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
-                GlStateManager.color(0.56f, 0.16f, 0.125f, 0.5f);
-			//}
+			IDifficulty diff = entity.getCapability(DifficultyProvider.DIFFICULTY_CAPABILITY, null);
+			if (diff != null) {
+				if (diff.getModifiers().size() > 0) {
+	                GlStateManager.pushMatrix();
+	                GlStateManager.enableBlend();
+	                GlStateManager.blendFunc(GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
+	                GlStateManager.color(0.56f, 0.16f, 0.125f, 0.5f);
+				}
+			}
 		}
 	}
 	
@@ -314,11 +314,13 @@ public class EntityEvents {
 	public static void EntityRenderPost(RenderLivingEvent.Post event) {
 		Entity entity = event.getEntity();
 		if (entity instanceof EntityLivingBase) {
-			boolean isModded = TagHelper.MobHasBeenModded(entity);
-			//if (isModded) {
-                GlStateManager.disableBlend();
-                GlStateManager.popMatrix();
-			//}
+			IDifficulty diff = entity.getCapability(DifficultyProvider.DIFFICULTY_CAPABILITY, null);
+			if (diff != null) {
+				if (diff.getModifiers().size() > 0) {
+	                GlStateManager.disableBlend();
+	                GlStateManager.popMatrix();
+				}
+			}
 		}
 	}
 }
