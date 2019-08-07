@@ -123,7 +123,9 @@ public class EffectManager {
 			DifficultyMod.logger.info("Entity Max HP\t\t: "+entity.getMaxHealth());
 			
 			IAttributeInstance strengthAttr = entity.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE);
-			DifficultyMod.logger.info("Entity Strength\t\t: "+strengthAttr.getAttributeValue());
+			if (strengthAttr != null) {
+				DifficultyMod.logger.info("Entity Strength\t\t: "+strengthAttr.getAttributeValue());
+			}
 			
 			IAttributeInstance speedAttr = entity.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED);
 			DifficultyMod.logger.info("Entity Speed\t\t\t: "+speedAttr.getAttributeValue());

@@ -126,6 +126,8 @@ public class EntityEvents {
 		IDifficulty diff = entity.getCapability(DifficultyProvider.DIFFICULTY_CAPABILITY, null);
 		if (diff != null) {
 			int diffSpawnedWith = diff.getDifficulty();
+			//LogHelper.LogInfo("Difficulty: "+diff.getDifficulty());
+			//LogHelper.LogInfo("Modifiers: "+diff.getModifiers().size());
 			for (ISpecialEffect effect:DifficultyCapabilityHelper.GetSpecialEffectsFromEntity(entity)) {
 				try {
 					effect.OnEntityLivingUpdate(event, diffSpawnedWith);
@@ -293,13 +295,16 @@ public class EntityEvents {
 		}
 	}
 
+	//The last two events currently don't work right due to client/server sync things (I think)
 	@SubscribeEvent
 	public static void EntityRenderPre(RenderLivingEvent.Pre event) {
 		//LogHelper.LogInfo("PreRender event");
 		Entity entity = event.getEntity();
 		if (entity instanceof EntityLivingBase) {
 			IDifficulty diff = entity.getCapability(DifficultyProvider.DIFFICULTY_CAPABILITY, null);
+			LogHelper.LogInfo("Capability is null: "+(diff == null));
 			if (diff != null) {
+				LogHelper.LogInfo("Modifiers: "+diff.getModifiers().size());
 				if (diff.getModifiers().size() > 0) {
 	                GlStateManager.pushMatrix();
 	                GlStateManager.enableBlend();
