@@ -9,6 +9,8 @@ import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
+import nightwraid.diff.capabilities.DifficultyProvider;
+import nightwraid.diff.capabilities.IDifficulty;
 import nightwraid.diff.effects.EffectManager;
 import nightwraid.diff.settings.GeneralSettings;
 
@@ -65,6 +67,7 @@ public class PlayerDifficultyHelper {
 			diff = GeneralSettings.playerDefaultDifficultyTicks;
 			player.addTag(ModifierNames.MOB_LEVEL_DENOTATION+diff);
 		}
+		
 		return diff;
 	}
 	
