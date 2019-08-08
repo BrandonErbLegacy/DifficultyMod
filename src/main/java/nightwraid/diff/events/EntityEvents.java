@@ -2,9 +2,6 @@ package nightwraid.diff.events;
 
 import java.util.List;
 
-import org.lwjgl.opengl.GL11;
-
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
@@ -15,18 +12,19 @@ import net.minecraft.entity.passive.IAnimals;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.DamageSource;
 import net.minecraft.world.World;
-import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import nightwraid.diff.capabilities.DifficultyProvider;
 import nightwraid.diff.capabilities.IDifficulty;
 import nightwraid.diff.effects.EffectManager;
 import nightwraid.diff.effects.ISpecialEffect;
 import nightwraid.diff.general.DifficultyMod;
+import nightwraid.diff.network.DifficultySyncPacket;
 import nightwraid.diff.settings.EntitySettings;
 import nightwraid.diff.settings.GeneralSettings;
 import nightwraid.diff.utils.DifficultyCapabilityHelper;
@@ -108,7 +106,10 @@ public class EntityEvents {
 				ex.printStackTrace();
 			}
 		}
+		
 	}
+	
+	//public static void EntityJoinedWorld(EntityJoi)
 	
 	@SubscribeEvent
 	public static void LivingUpdateEvent(LivingEvent.LivingUpdateEvent event) {
@@ -293,5 +294,20 @@ public class EntityEvents {
 				}
 			}
 		}
+	}
+	
+	@SubscribeEvent
+	public static void LivingEntityTrackingStarted(PlayerEvent.StartTracking event) {
+		Entity ent = event.getTarget();
+		LogHelper.LogInfo("Started tracking:"+ent.getEntityId() + " - " + ent.getName());
+		//This needs to be a living entity.
+		if (ent instanceof EntityLiving) {
+			EntityLiving entity = (EntityLiving) ent;
+			IDifficulty diff = entity.getCapability(DifficultyProvider.DIFFICULTY_CAPABILITY, null);
+			if (diff != null) {
+				int diffSpawnedWith = diff.getDifficulty();
+				DifficultyMod.network.sendToAllTracking(new DifficultySyncPacket((EntityLivingBase) entity, diff.getDifficulty(), diff.getModifiers()), entity);
+			}
+		} 
 	}
 }

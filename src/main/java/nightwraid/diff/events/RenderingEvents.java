@@ -20,7 +20,7 @@ public class RenderingEvents {
 			IDifficulty diff = entity.getCapability(DifficultyProvider.DIFFICULTY_CAPABILITY, null);
 			//LogHelper.LogInfo("Capability is null: "+(diff == null));
 			if (diff != null) {
-				//LogHelper.LogInfo("Modifiers: "+diff.getModifiers().size());
+				//LogHelper.LogInfo("Modifiers: "+diff.getModifiers().size() + ", Diff: "+diff.getDifficulty());
 				if (diff.getModifiers().size() > 0) {
 	                GlStateManager.pushMatrix();
 	                GlStateManager.enableBlend();
