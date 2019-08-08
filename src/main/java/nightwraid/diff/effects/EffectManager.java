@@ -25,6 +25,7 @@ import nightwraid.diff.general.DifficultyMod;
 import nightwraid.diff.network.DifficultySyncPacket;
 import nightwraid.diff.settings.EntitySettings;
 import nightwraid.diff.settings.GeneralSettings;
+import nightwraid.diff.utils.LogHelper;
 import nightwraid.diff.utils.ModifierNames;
 
 public class EffectManager {
@@ -57,9 +58,9 @@ public class EffectManager {
 		ApplyMods(entity, difficulty);
 		ApplyEquipment(entity, difficulty);
 		IDifficulty diff = entity.getCapability(DifficultyProvider.DIFFICULTY_CAPABILITY, null);
+		LogHelper.LogInfo("Diff is null: "+(diff == null));
 		if (diff != null) {
 			diff.setDifficulty(difficulty);
-			DifficultyMod.network.sendToAll(new DifficultySyncPacket(entity, diff.getDifficulty(), diff.getModifiers()));
 		}
 	}
 	

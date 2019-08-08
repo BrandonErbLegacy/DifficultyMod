@@ -3,8 +3,10 @@ package nightwraid.diff.capabilities;
 import java.util.ArrayList;
 import java.util.List;
 
+import nightwraid.diff.settings.GeneralSettings;
+
 public class DifficultyCapability implements IDifficulty {
-	int difficultyLevel = 0;
+	int difficultyLevel = GeneralSettings.playerDefaultDifficultyTicks;
 	List<String> modifiers = new ArrayList<String>();
 	
 	public void setDifficulty(int diff) {
