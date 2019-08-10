@@ -1,6 +1,5 @@
 package nightwraid.diff.network;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,8 +16,6 @@ import net.minecraftforge.fml.relauncher.Side;
 import nightwraid.diff.capabilities.DifficultyProvider;
 import nightwraid.diff.capabilities.IDifficulty;
 import nightwraid.diff.general.DifficultyMod;
-import nightwraid.diff.utils.ByteBufUtil;
-import nightwraid.diff.utils.LogHelper;
 
 public class DifficultySyncPacket implements IMessage {
 	public int entityID;

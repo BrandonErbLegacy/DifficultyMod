@@ -1,19 +1,18 @@
 package nightwraid.diff.effects.modifiers;
 
-import java.util.Random;
-
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
+import net.minecraft.world.BossInfo.Color;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import nightwraid.diff.effects.ISpecialEffect;
-import nightwraid.diff.general.DifficultyMod;
 import nightwraid.diff.settings.EntityBulwarkSettings;
 import nightwraid.diff.utils.LogHelper;
+import nightwraid.diff.utils.RGBA;
 import nightwraid.diff.utils.UnlockMessageHelper;
 
 public class SpecialEffectBulwark implements ISpecialEffect {
@@ -91,5 +90,15 @@ public class SpecialEffectBulwark implements ISpecialEffect {
 		} else if (difficulty == EntityBulwarkSettings.bulwarkResistOneshotUnlocked) {
 			UnlockMessageHelper.SendAbilityUnlockMessage(player, NAME, "have gained the ability to occasionally resist being one shot!");
 		}
+	}
+	
+	@Override
+	public Color GetHealthbarColor() {
+		return Color.PINK;
+	}
+	
+	@Override
+	public RGBA GetShaderColor() {
+		return new RGBA(191f, 63f, 127f);
 	}
 }

@@ -11,12 +11,14 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
+import net.minecraft.world.BossInfo.Color;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import nightwraid.diff.effects.ISpecialEffect;
 import nightwraid.diff.settings.EntityHellspawnSettings;
+import nightwraid.diff.utils.RGBA;
 import nightwraid.diff.utils.UnlockMessageHelper;
 
 public class SpecialEffectHellspawn implements ISpecialEffect {
@@ -153,4 +155,14 @@ public class SpecialEffectHellspawn implements ISpecialEffect {
 		}
 	}
 
+	@Override
+	public Color GetHealthbarColor() {
+		return Color.RED;
+	}
+	
+	@Override
+	public RGBA GetShaderColor() {
+		return new RGBA(212f, 93f, 93f);
+	}
+	
 }

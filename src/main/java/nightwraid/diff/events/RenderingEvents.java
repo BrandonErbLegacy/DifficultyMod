@@ -9,7 +9,9 @@ import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import nightwraid.diff.capabilities.DifficultyProvider;
 import nightwraid.diff.capabilities.IDifficulty;
-import nightwraid.diff.utils.LogHelper;
+import nightwraid.diff.effects.EffectManager;
+import nightwraid.diff.effects.ISpecialEffect;
+import nightwraid.diff.utils.RGBA;
 
 //These both run a lot. Might be a little excessive for something that doesn't change much
 public class RenderingEvents {
@@ -23,10 +25,13 @@ public class RenderingEvents {
 			if (diff != null) {
 				//LogHelper.LogInfo("Modifiers: "+diff.getModifiers().size() + ", Diff: "+diff.getDifficulty());
 				if (diff.getModifiers().size() > 0) {
+					ISpecialEffect effect = EffectManager.GetSpecialEffectByName(diff.getModifiers().get(0));
 	                GlStateManager.pushMatrix();
 	                GlStateManager.enableBlend();
 	                GlStateManager.blendFunc(GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
-	                GlStateManager.color(0.56f, 0.16f, 0.125f, 0.5f);
+	                //GlStateManager.color(0.56f, 0.16f, 0.125f, 0.5f);
+	                RGBA color = effect.GetShaderColor();
+	                GlStateManager.color(color.R, color.G, color.B, color.A);
 				}
 			}
 		}

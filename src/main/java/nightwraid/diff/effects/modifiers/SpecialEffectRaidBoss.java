@@ -10,9 +10,11 @@ import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraft.world.BossInfo.Color;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import nightwraid.diff.effects.ISpecialEffect;
 import nightwraid.diff.settings.EntityRaidBossSettings;
+import nightwraid.diff.utils.RGBA;
 import nightwraid.diff.utils.UnlockMessageHelper;
 
 public class SpecialEffectRaidBoss implements ISpecialEffect {
@@ -98,5 +100,15 @@ public class SpecialEffectRaidBoss implements ISpecialEffect {
 		if (difficulty == EntityRaidBossSettings.levelRaidBossEnabled) {
 			UnlockMessageHelper.SendAbilityUnlockMessage(player, NAME, "can now be spawned! These mobs will clone themselves when they take damage. Be wary! Their clones have a chance at being modded too!");
 		}
+	}
+	
+	@Override
+	public Color GetHealthbarColor() {
+		return Color.BLUE;
+	}
+	
+	@Override
+	public RGBA GetShaderColor() {
+		return new RGBA(93f, 93f, 212f);
 	}
 }

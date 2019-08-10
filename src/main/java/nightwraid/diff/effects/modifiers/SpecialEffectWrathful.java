@@ -6,6 +6,7 @@ import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.BossInfo.Color;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import nightwraid.diff.effects.ISpecialEffect;
@@ -13,6 +14,7 @@ import nightwraid.diff.settings.EntityRaidBossSettings;
 import nightwraid.diff.settings.EntityWrathfulSettings;
 import nightwraid.diff.utils.LogHelper;
 import nightwraid.diff.utils.ModifierNames;
+import nightwraid.diff.utils.RGBA;
 import nightwraid.diff.utils.UnlockMessageHelper;
 
 public class SpecialEffectWrathful implements ISpecialEffect {
@@ -90,5 +92,15 @@ public class SpecialEffectWrathful implements ISpecialEffect {
 		if (difficulty == EntityWrathfulSettings.wrathfulLevelEnabled) {
 			UnlockMessageHelper.SendAbilityUnlockMessage(player, NAME, "can now be spawned! "+NAME+" mobs gain increasing speed and strength the lower on HP they get.");
 		}
+	}
+	
+	@Override
+	public Color GetHealthbarColor() {
+		return Color.RED;
+	}
+	
+	@Override
+	public RGBA GetShaderColor() {
+		return new RGBA(212f, 93f, 93f);
 	}
 }

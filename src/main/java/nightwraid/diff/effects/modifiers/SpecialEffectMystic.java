@@ -17,6 +17,7 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
+import net.minecraft.world.BossInfo.Color;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
@@ -24,6 +25,7 @@ import nightwraid.diff.effects.ISpecialEffect;
 import nightwraid.diff.settings.EntityMysticSettings;
 import nightwraid.diff.settings.GeneralSettings;
 import nightwraid.diff.utils.LogHelper;
+import nightwraid.diff.utils.RGBA;
 import nightwraid.diff.utils.UnlockMessageHelper;
 
 public class SpecialEffectMystic implements ISpecialEffect {
@@ -295,5 +297,15 @@ public class SpecialEffectMystic implements ISpecialEffect {
 		if (difficulty == UNLOCKED_AT) {
 			UnlockMessageHelper.SendAbilityUnlockMessage(player, NAME, "can now be spawned! These mobs are tricky. They will attempt to teleport away and regen HP if they get too low. Additionally they can teleport to you (bring nearby mobs) if you are out of their range for too long.");
 		}
+	}
+	
+	@Override
+	public Color GetHealthbarColor() {
+		return Color.PURPLE;
+	}
+	
+	@Override
+	public RGBA GetShaderColor() {
+		return new RGBA(153f, 93f, 212f);
 	}
 }

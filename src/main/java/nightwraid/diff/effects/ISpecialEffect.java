@@ -3,8 +3,8 @@ package nightwraid.diff.effects;
 import java.util.Random;
 
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.boss.EntityWither;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.BossInfo.Color;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
@@ -13,6 +13,7 @@ import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
+import nightwraid.diff.utils.RGBA;
 
 public interface ISpecialEffect {
 	public static Random rand = new Random();
@@ -58,5 +59,6 @@ public interface ISpecialEffect {
 	public String GetName();
 	public int GetLevel();
 	public void AbilityUnlockHandler(EntityPlayer player, int difficulty);
-	//public final BossInfoServer bossInfo = (BossInfoServer)(new BossInfoServer(this.GetName(), BossInfo.Color.PURPLE, BossInfo.Overlay.PROGRESS)).setDarkenSky(true);
+	public Color GetHealthbarColor();
+	public RGBA GetShaderColor();
 }

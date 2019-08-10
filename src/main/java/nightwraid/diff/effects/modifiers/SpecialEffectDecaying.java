@@ -6,12 +6,14 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
+import net.minecraft.world.BossInfo.Color;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import nightwraid.diff.effects.ISpecialEffect;
 import nightwraid.diff.settings.EntityBulwarkSettings;
 import nightwraid.diff.settings.EntityDecayingSettings;
 import nightwraid.diff.settings.EntityHellspawnSettings;
+import nightwraid.diff.utils.RGBA;
 import nightwraid.diff.utils.UnlockMessageHelper;
 
 public class SpecialEffectDecaying implements ISpecialEffect {
@@ -70,5 +72,15 @@ public class SpecialEffectDecaying implements ISpecialEffect {
 		} else if (difficulty == EntityDecayingSettings.witherDebuffOnHitEnabled) {
 			UnlockMessageHelper.SendAbilityUnlockMessage(player, NAME, "have gained the ability to wither their targets when they attack!");
 		} 
+	}
+	
+	@Override
+	public Color GetHealthbarColor() {
+		return Color.WHITE;
+	}
+	
+	@Override
+	public RGBA GetShaderColor() {
+		return new RGBA(0f, 0f, 0f);
 	}
 }

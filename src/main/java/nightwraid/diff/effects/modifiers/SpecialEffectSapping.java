@@ -7,6 +7,7 @@ import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
+import net.minecraft.world.BossInfo.Color;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
@@ -17,6 +18,7 @@ import nightwraid.diff.effects.ISpecialEffect;
 import nightwraid.diff.settings.EntitySappingSettings;
 import nightwraid.diff.utils.LogHelper;
 import nightwraid.diff.utils.PositionHelper;
+import nightwraid.diff.utils.RGBA;
 import nightwraid.diff.utils.UnlockMessageHelper;
 
 public class SpecialEffectSapping implements ISpecialEffect, ISpecialAttackMob {
@@ -118,5 +120,15 @@ public class SpecialEffectSapping implements ISpecialEffect, ISpecialAttackMob {
 				}
 			}
 		}
+	}
+	
+	@Override
+	public Color GetHealthbarColor() {
+		return Color.YELLOW;
+	}
+	
+	@Override
+	public RGBA GetShaderColor() {
+		return new RGBA(212f, 212f, 93f);
 	}
 }
