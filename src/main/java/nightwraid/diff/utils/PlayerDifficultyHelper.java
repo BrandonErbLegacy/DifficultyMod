@@ -120,10 +120,6 @@ public class PlayerDifficultyHelper {
 	}
 	public void RemoveEntity(EntityLiving entity) {
 		DamagedEntitiesToPlayers.remove(entity);
-		//Update the mob's healthbar
-		BossInfoServer bar = DifficultyMod.pdh.GetHealthbarForEntity(entity);
-		bar.setVisible(false);
-		RemoveHealthbarForEntity(entity);
 	}
 	
 	public static void WorldAnnouncement(World world, String message) {

@@ -78,16 +78,6 @@ public class EntityEvents {
 							EffectManager.AmpUpMob((EntityLiving) entity, HighestDifficultyTick);
 						}
 					}
-					//Probably removing since special mobs will now have healthbars
-					/*List<ISpecialEffect> effects = DifficultyCapabilityHelper.GetSpecialEffectsFromEntity(entity);
-					if (effects.size() > 0) {
-						String name = "";
-						for (ISpecialEffect effect:effects) {
-							name = name + effect.GetName() + " ";
-						}
-						name = name + entity.getName();
-						entity.setCustomNameTag(name);
-					}*/
 				}
 			}
 
@@ -98,6 +88,9 @@ public class EntityEvents {
 				for (ISpecialEffect effect:DifficultyCapabilityHelper.GetSpecialEffectsFromEntity(entity)) {
 					effect.OnEntityJoinedWorld(event, diffSpawnedWith);
 				}
+				//if (entity.world.isRemote == false)
+				//	DifficultyMod.network.sendToAllTracking(new DifficultySyncPacket((EntityLivingBase) entity, diff.getDifficulty(), diff.getModifiers()), entity);
+
 			}
 		}
 		catch (Exception ex) {
@@ -111,9 +104,7 @@ public class EntityEvents {
 		}
 		
 	}
-	
-	//public static void EntityJoinedWorld(EntityJoi)
-	
+		
 	@SubscribeEvent
 	public static void LivingUpdateEvent(LivingEvent.LivingUpdateEvent event) {
 		if (event.getEntity() instanceof EntityPlayer) {
@@ -137,6 +128,18 @@ public class EntityEvents {
 					effect.OnEntityLivingUpdate(event, diffSpawnedWith);
 				} catch (Exception ex) {
 					LogHelper.LogError("LivingUpdateEvent error encountered for: "+entity.getName()+" with modifier "+effect.GetName(), ex);
+				}
+			}
+		}
+		
+		if (diff.getModifiers().size() > 0) {
+			//Update the mob's healthbar
+			BossInfoServer bar = DifficultyMod.pdh.GetHealthbarForEntity(entity);
+			if (bar != null) {
+				bar.setPercent(entity.getHealth()/entity.getMaxHealth());
+				if (bar.getPercent() == 0) {
+					bar.setVisible(false);
+					DifficultyMod.pdh.RemoveHealthbarForEntity(entity);
 				}
 			}
 		}
@@ -169,10 +172,6 @@ public class EntityEvents {
 				}
 			}
 		}
-		
-		//Update the mob's healthbar
-		BossInfoServer bar = DifficultyMod.pdh.GetHealthbarForEntity(entity);
-		bar.setPercent(entity.getHealth()/entity.getMaxHealth());
 	}
 	
 	@SubscribeEvent
@@ -307,7 +306,6 @@ public class EntityEvents {
 	public static void LivingEntityTrackingStarted(PlayerEvent.StartTracking event) {
 		//Handle sending difficulty capability packets
 		Entity ent = event.getTarget();
-		LogHelper.LogInfo("Started tracking:"+ent.getEntityId() + " - " + ent.getName());
 		//This needs to be a living entity.
 		if (ent instanceof EntityLiving) {
 			EntityLiving entity = (EntityLiving) ent;
@@ -315,23 +313,34 @@ public class EntityEvents {
 			if (diff != null) {
 				int diffSpawnedWith = diff.getDifficulty();
 				DifficultyMod.network.sendToAllTracking(new DifficultySyncPacket((EntityLivingBase) entity, diff.getDifficulty(), diff.getModifiers()), entity);
+			} else {
+				return;
+			}
+			//Handle creating boss healthbars
+			if (event.getEntityPlayer() instanceof EntityPlayerMP && diff.getModifiers().size() > 0) {
+				EntityLiving living = (EntityLiving) ent;
+				DifficultyMod.pdh.AddPlayerToHealthbar(living, event.getEntityPlayer());
 			}
 		} 
-		
-		//Handle creating boss healthbars
-		if (ent instanceof EntityLiving && event.getEntityPlayer() instanceof EntityPlayerMP) {
-			EntityLiving living = (EntityLiving) ent;
-			DifficultyMod.pdh.AddPlayerToHealthbar(living, event.getEntityPlayer());
-		}
 	}
 	
 	@SubscribeEvent
 	public static void LivingEntityTrackingEnded(PlayerEvent.StopTracking event) {
 		//Handle removing boss healthbars
 		Entity ent = event.getTarget();
-		if (ent instanceof EntityLiving && event.getEntityPlayer() instanceof EntityPlayerMP) {
-			EntityLiving living = (EntityLiving) ent;
-			DifficultyMod.pdh.RemovePlayerFromHealthbar(living, event.getEntityPlayer());
-		}
+		
+		//This needs to be a living entity.
+		if (ent instanceof EntityLiving) {
+			EntityLiving entity = (EntityLiving) ent;
+			IDifficulty diff = entity.getCapability(DifficultyProvider.DIFFICULTY_CAPABILITY, null);
+			if (diff == null) {
+				return;
+			}
+			//Handle creating boss healthbars
+			if (event.getEntityPlayer() instanceof EntityPlayerMP && diff.getModifiers().size() > 0) {
+				EntityLiving living = (EntityLiving) ent;
+				DifficultyMod.pdh.RemovePlayerFromHealthbar(living, event.getEntityPlayer());
+			}
+		} 
 	}
 }

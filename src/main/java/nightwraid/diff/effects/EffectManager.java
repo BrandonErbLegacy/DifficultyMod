@@ -54,14 +54,14 @@ public class EffectManager {
 		
 		//TODO: I'm 99% sure that these get reapplied now, with the change from the tag system to the capability system
 		//Investigate and removed the duplicated mod/stat bug
-		ApplyStats(entity, difficulty);
-		ApplyMods(entity, difficulty);
-		ApplyEquipment(entity, difficulty);
 		IDifficulty diff = entity.getCapability(DifficultyProvider.DIFFICULTY_CAPABILITY, null);
 		LogHelper.LogInfo("Diff is null: "+(diff == null));
 		if (diff != null) {
 			diff.setDifficulty(difficulty);
 		}
+		ApplyStats(entity, difficulty);
+		ApplyMods(entity, difficulty);
+		ApplyEquipment(entity, difficulty);
 	}
 	
 	private static void ApplyMods(EntityLiving entity, int difficulty) {
@@ -113,7 +113,12 @@ public class EffectManager {
 		String modsAdded = "Spawned "+entity.getName()+" with ";
 		for (int val: indexesToGrab) {
 			ISpecialEffect effectToAdd = unlockedMods.get(val);
-			entity.addTag(ModifierNames.MOB_CAPABILITY_DENOTATION+effectToAdd.GetName());
+			//entity.addTag(ModifierNames.MOB_CAPABILITY_DENOTATION+effectToAdd.GetName());
+			IDifficulty diff = entity.getCapability(DifficultyProvider.DIFFICULTY_CAPABILITY, null);
+			if (diff != null) {
+				diff.addModifier(effectToAdd.GetName());
+			}
+			
 			modsAdded = modsAdded +effectToAdd.GetName()+ ", ";
 		}
 		if (GeneralSettings.debugModeEnabled && indexesToGrab.size() > 0) {
