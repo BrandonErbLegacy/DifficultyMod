@@ -10,7 +10,9 @@ import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.passive.IAnimals;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.DamageSource;
+import net.minecraft.world.BossInfoServer;
 import net.minecraft.world.World;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
@@ -76,7 +78,8 @@ public class EntityEvents {
 							EffectManager.AmpUpMob((EntityLiving) entity, HighestDifficultyTick);
 						}
 					}
-					List<ISpecialEffect> effects = DifficultyCapabilityHelper.GetSpecialEffectsFromEntity(entity);
+					//Probably removing since special mobs will now have healthbars
+					/*List<ISpecialEffect> effects = DifficultyCapabilityHelper.GetSpecialEffectsFromEntity(entity);
 					if (effects.size() > 0) {
 						String name = "";
 						for (ISpecialEffect effect:effects) {
@@ -84,7 +87,7 @@ public class EntityEvents {
 						}
 						name = name + entity.getName();
 						entity.setCustomNameTag(name);
-					}
+					}*/
 				}
 			}
 
@@ -166,6 +169,10 @@ public class EntityEvents {
 				}
 			}
 		}
+		
+		//Update the mob's healthbar
+		BossInfoServer bar = DifficultyMod.pdh.GetHealthbarForEntity(entity);
+		bar.setPercent(entity.getHealth()/entity.getMaxHealth());
 	}
 	
 	@SubscribeEvent
@@ -298,6 +305,7 @@ public class EntityEvents {
 	
 	@SubscribeEvent
 	public static void LivingEntityTrackingStarted(PlayerEvent.StartTracking event) {
+		//Handle sending difficulty capability packets
 		Entity ent = event.getTarget();
 		LogHelper.LogInfo("Started tracking:"+ent.getEntityId() + " - " + ent.getName());
 		//This needs to be a living entity.
@@ -309,5 +317,21 @@ public class EntityEvents {
 				DifficultyMod.network.sendToAllTracking(new DifficultySyncPacket((EntityLivingBase) entity, diff.getDifficulty(), diff.getModifiers()), entity);
 			}
 		} 
+		
+		//Handle creating boss healthbars
+		if (ent instanceof EntityLiving && event.getEntityPlayer() instanceof EntityPlayerMP) {
+			EntityLiving living = (EntityLiving) ent;
+			DifficultyMod.pdh.AddPlayerToHealthbar(living, event.getEntityPlayer());
+		}
+	}
+	
+	@SubscribeEvent
+	public static void LivingEntityTrackingEnded(PlayerEvent.StopTracking event) {
+		//Handle removing boss healthbars
+		Entity ent = event.getTarget();
+		if (ent instanceof EntityLiving && event.getEntityPlayer() instanceof EntityPlayerMP) {
+			EntityLiving living = (EntityLiving) ent;
+			DifficultyMod.pdh.RemovePlayerFromHealthbar(living, event.getEntityPlayer());
+		}
 	}
 }

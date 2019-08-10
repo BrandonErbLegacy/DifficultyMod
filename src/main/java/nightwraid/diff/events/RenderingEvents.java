@@ -11,6 +11,7 @@ import nightwraid.diff.capabilities.DifficultyProvider;
 import nightwraid.diff.capabilities.IDifficulty;
 import nightwraid.diff.utils.LogHelper;
 
+//These both run a lot. Might be a little excessive for something that doesn't change much
 public class RenderingEvents {
 	@SubscribeEvent
 	public static void EntityRenderPre(RenderLivingEvent.Pre event) {

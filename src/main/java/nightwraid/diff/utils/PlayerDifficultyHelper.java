@@ -7,17 +7,22 @@ import java.util.Map;
 
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.text.TextComponentString;
+import net.minecraft.world.BossInfoServer;
 import net.minecraft.world.World;
-import nightwraid.diff.capabilities.DifficultyProvider;
-import nightwraid.diff.capabilities.IDifficulty;
 import nightwraid.diff.effects.EffectManager;
+import nightwraid.diff.general.DifficultyMod;
 import nightwraid.diff.settings.GeneralSettings;
 
 public class PlayerDifficultyHelper {
 	public Map<EntityLiving, List<EntityPlayer>> DamagedEntitiesToPlayers = new HashMap<EntityLiving, List<EntityPlayer>>();
 	public Map<EntityPlayer, Integer> NormalEntitiesKilled = new HashMap<EntityPlayer, Integer>();
 	public Map<EntityPlayer, Integer> BossEntitiesKilled = new HashMap<EntityPlayer, Integer>();
+	
+	//public Map<BossInfoServer, EntityPlayer> BossHealthbars = new HashMap<BossInfoServer, EntityPlayer>();
+	
+	public Map<EntityLiving, BossHealthbarTracker> BossHealthbars = new HashMap<EntityLiving, BossHealthbarTracker>();
 	
 	public PlayerDifficultyHelper() {
 		
@@ -115,6 +120,10 @@ public class PlayerDifficultyHelper {
 	}
 	public void RemoveEntity(EntityLiving entity) {
 		DamagedEntitiesToPlayers.remove(entity);
+		//Update the mob's healthbar
+		BossInfoServer bar = DifficultyMod.pdh.GetHealthbarForEntity(entity);
+		bar.setVisible(false);
+		RemoveHealthbarForEntity(entity);
 	}
 	
 	public static void WorldAnnouncement(World world, String message) {
@@ -129,5 +138,50 @@ public class PlayerDifficultyHelper {
 	
 	public static int GetRequiredKillsPerLevel(EntityPlayer player) {
 		return GetRequiredKillsPerLevel(DifficultyCapabilityHelper.GetEntityDifficulty(player));
+	}
+
+	public void RemoveHealthbarForEntity(EntityLiving entity) {
+		if (BossHealthbars.containsKey(entity)) {
+			BossHealthbars.remove(entity);
+		}
+	}
+	
+	public BossInfoServer GetHealthbarForEntity(EntityLiving entity) {
+		BossHealthbarTracker tracker = BossHealthbars.get(entity);
+		if (tracker == null) {
+			return null;
+		} else {
+			return tracker.GetServer();
+		}
+	}
+	
+	public void AddPlayerToHealthbar(EntityLiving entity, EntityPlayer player) {
+		BossHealthbarTracker tracker;
+		if (BossHealthbars.containsKey(entity) == false) {
+			tracker = new BossHealthbarTracker(entity, player);
+			BossHealthbars.put(entity, tracker);
+		} else {
+			tracker = BossHealthbars.get(entity);
+			tracker.AddTrackingPlayer(player);
+		}
+		if (player instanceof EntityPlayerMP) {
+			tracker.GetServer().addPlayer((EntityPlayerMP) player);
+		}
+	}
+	
+	public void RemovePlayerFromHealthbar(EntityLiving entity, EntityPlayer player) {
+		BossHealthbarTracker tracker;
+		if (BossHealthbars.containsKey(entity) == false) {
+			return;
+		} else {
+			tracker = BossHealthbars.get(entity);
+			tracker.RemoveTrackingPlayer(player);
+		}
+		if (player instanceof EntityPlayerMP) {
+			tracker.GetServer().removePlayer((EntityPlayerMP) player);
+		}
+		if (tracker.PlayerTrackingCount() == 0) {
+			BossHealthbars.remove(entity);
+		}
 	}
 }
