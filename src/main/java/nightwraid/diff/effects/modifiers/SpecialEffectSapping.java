@@ -6,6 +6,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.DamageSource;
 import net.minecraft.world.World;
 import net.minecraft.world.BossInfo.Color;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
@@ -106,13 +107,8 @@ public class SpecialEffectSapping implements ISpecialEffect, ISpecialAttackMob {
 					target.performHurtAnimation();
 				}
 
-				if (target.getHealth() <= damageToDeal) {
-					target.setHealth(0);
-					target.setDead();
-				} else {
-					target.setHealth((float) (target.getHealth()-damageToDeal));
-				}
-				entity.setHealth((float) (entity.getHealth() + damageToDeal));
+				target.attackEntityFrom(DamageSource.GENERIC, (float) damageToDeal);
+				entity.heal((float) damageToDeal);
 				
 				if (target instanceof EntityPlayer) {
 					EntityPlayer player = (EntityPlayer) target;
