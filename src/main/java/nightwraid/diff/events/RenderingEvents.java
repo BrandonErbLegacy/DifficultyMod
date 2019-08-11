@@ -31,7 +31,7 @@ public class RenderingEvents {
 	                GlStateManager.blendFunc(GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
 	                //GlStateManager.color(0.56f, 0.16f, 0.125f, 0.5f);
 	                RGBA color = effect.GetShaderColor();
-	                GlStateManager.color(color.R, color.G, color.B, color.A);
+	                GlStateManager.color(color.R/255f, color.G/255f, color.B/255f, color.A);
 				}
 			}
 		}

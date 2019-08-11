@@ -81,6 +81,6 @@ public class SpecialEffectDecaying implements ISpecialEffect {
 	
 	@Override
 	public RGBA GetShaderColor() {
-		return new RGBA(0f, 0f, 0f);
+		return new RGBA(64f, 64f, 64f);
 	}
 }
