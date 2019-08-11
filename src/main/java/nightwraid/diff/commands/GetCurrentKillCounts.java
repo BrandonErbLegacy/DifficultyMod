@@ -9,7 +9,10 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.TextComponentString;
+import nightwraid.diff.capabilities.DifficultyProvider;
+import nightwraid.diff.capabilities.IDifficulty;
 import nightwraid.diff.general.DifficultyMod;
+import nightwraid.diff.utils.LogHelper;
 
 public class GetCurrentKillCounts extends CommandBase  {
 	private final String CMD_NAME = "getcurrentkillcounts";
@@ -26,8 +29,11 @@ public class GetCurrentKillCounts extends CommandBase  {
 	}
 	
 	public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
-		for (EntityPlayer player:DifficultyMod.pdh.NormalEntitiesKilled.keySet()) {
-			sender.sendMessage(new TextComponentString("\u00A76["+player.getName()+"]\u00A7f has "+DifficultyMod.pdh.NormalEntitiesKilled.get(player)+" kills"));
+		for (EntityPlayer player:server.getPlayerList().getPlayers()) {
+			IDifficulty diff = player.getCapability(DifficultyProvider.DIFFICULTY_CAPABILITY, null);
+			if (diff != null) {
+				sender.sendMessage(new TextComponentString("\u00A76["+player.getName()+"]\u00A7f has "+diff.getMobsKilled()+" kills"));
+			}
 		}
 	}	
 	

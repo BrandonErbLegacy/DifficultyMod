@@ -3,10 +3,13 @@ package nightwraid.diff.capabilities;
 import java.util.ArrayList;
 import java.util.List;
 
+import nightwraid.diff.general.DifficultyMod;
 import nightwraid.diff.settings.GeneralSettings;
 
 public class DifficultyCapability implements IDifficulty {
 	int difficultyLevel = GeneralSettings.playerDefaultDifficultyTicks;
+	int mobsKilled = 0;
+	int bossesKilled = 0;
 	List<String> modifiers = new ArrayList<String>();
 	
 	public void setDifficulty(int diff) {
@@ -27,4 +30,22 @@ public class DifficultyCapability implements IDifficulty {
 	public boolean hasEffect() {
 		return (this.modifiers.size() > 0);
 	};
+	public void setMobsKilled(int val) {
+		this.mobsKilled = val;
+	}
+	public int getMobsKilled() {
+		return this.mobsKilled;
+	}
+	public void incrementMobsKilled() {
+		this.mobsKilled++;
+	}
+	public void setBossesKilled(int val) {
+		this.bossesKilled = val;
+	}
+	public int getBossesKilled() {
+		return this.bossesKilled;
+	}
+	public void incrementBossesKilled() {
+		this.bossesKilled++;
+	}
 }

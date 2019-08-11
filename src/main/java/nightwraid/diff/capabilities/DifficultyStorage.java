@@ -17,9 +17,13 @@ public class DifficultyStorage implements IStorage<IDifficulty> {
 			modList.appendTag(new NBTTagString(mod));
 		}
 		NBTTagInt diff = new NBTTagInt(instance.getDifficulty());
+		NBTTagInt mobs = new NBTTagInt(instance.getMobsKilled());
+		NBTTagInt bosses = new NBTTagInt(instance.getBossesKilled());
 		NBTTagCompound container = new NBTTagCompound();
 		container.setTag("TAG_LIST", modList);
 		container.setTag("DIFFICULTY", diff);
+		container.setTag("MOBS_KILLED", mobs);
+		container.setTag("BOSSES_KILLED", bosses);
 		return container;
 	}
 
@@ -28,8 +32,12 @@ public class DifficultyStorage implements IStorage<IDifficulty> {
 		// TODO Auto-generated method stub
 		NBTTagCompound tag = (NBTTagCompound) nbt;
 		int diff = ((NBTTagInt) tag.getTag("DIFFICULTY")).getInt();
+		int mobs = ((NBTTagInt) tag.getTag("MOBS_KILLED")).getInt();
+		int bosses = ((NBTTagInt) tag.getTag("BOSSES_KILLED")).getInt();
 		NBTTagList modifiers = ((NBTTagList) tag.getTag("TAG_LIST"));
 		instance.setDifficulty(diff);
+		instance.setMobsKilled(mobs);
+		instance.setBossesKilled(bosses);
 		//Now this is some ugly af code.
 		modifiers.forEach((NBTBase mod) -> instance.addModifier((((NBTTagString)mod).getString())));
 	}

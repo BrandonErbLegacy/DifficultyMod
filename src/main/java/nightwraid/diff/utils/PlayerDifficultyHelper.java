@@ -11,30 +11,19 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.BossInfoServer;
 import net.minecraft.world.World;
+import nightwraid.diff.capabilities.DifficultyProvider;
+import nightwraid.diff.capabilities.IDifficulty;
 import nightwraid.diff.effects.EffectManager;
 import nightwraid.diff.general.DifficultyMod;
 import nightwraid.diff.settings.GeneralSettings;
 
 public class PlayerDifficultyHelper {
 	public Map<EntityLiving, List<EntityPlayer>> DamagedEntitiesToPlayers = new HashMap<EntityLiving, List<EntityPlayer>>();
-	public Map<EntityPlayer, Integer> NormalEntitiesKilled = new HashMap<EntityPlayer, Integer>();
-	public Map<EntityPlayer, Integer> BossEntitiesKilled = new HashMap<EntityPlayer, Integer>();
-	
-	//public Map<BossInfoServer, EntityPlayer> BossHealthbars = new HashMap<BossInfoServer, EntityPlayer>();
 	
 	public Map<EntityLiving, BossHealthbarTracker> BossHealthbars = new HashMap<EntityLiving, BossHealthbarTracker>();
 	
 	public PlayerDifficultyHelper() {
 		
-	}
-	
-	public void SetupMapsForPlayer(EntityPlayer player) {
-		if (!NormalEntitiesKilled.containsKey(player)) {
-			NormalEntitiesKilled.put(player, 0);
-		}
-		if (!BossEntitiesKilled.containsKey(player)) {
-			BossEntitiesKilled.put(player, 0);
-		}
 	}
 	
 	
@@ -88,6 +77,7 @@ public class PlayerDifficultyHelper {
 	}
 	public void EntityDied(EntityLiving entity) {
 		if (entity == null || DamagedEntitiesToPlayers.containsKey(entity) == false) {
+			//LogHelper.LogInfo("Entity "+entity.getName()+" died while not being tracked");
 			return;
 		}
 		List<EntityPlayer> list = DamagedEntitiesToPlayers.get(entity);
@@ -96,24 +86,23 @@ public class PlayerDifficultyHelper {
 			if (!(player instanceof EntityPlayer)) {
 				continue;
 			}
-			if (entity.isNonBoss()) {
-				if (GeneralSettings.allowDifficultyTickByNormal) {
-					Integer killedCount = NormalEntitiesKilled.get(player);
-					killedCount++;
-					if (killedCount >= GetRequiredKillsPerLevel(player)) {
-						IncrementPlayerDifficulty(player, "normies");
-						killedCount = 0;
+			IDifficulty diff = player.getCapability(DifficultyProvider.DIFFICULTY_CAPABILITY, null);
+			if (diff != null) {
+				if (entity.isNonBoss()) {
+					if (GeneralSettings.allowDifficultyTickByNormal) {
+						diff.incrementMobsKilled();
+						if (diff.getMobsKilled() >= DifficultyMod.pdh.GetRequiredKillsPerLevel(diff.getDifficulty())) {
+							this.IncrementPlayerDifficulty(player, "normies");
+							diff.setMobsKilled(0);
+						}
 					}
-					NormalEntitiesKilled.replace(player, killedCount);
+				} else {
+					diff.incrementBossesKilled();
+					if (diff.getBossesKilled() >= GeneralSettings.playerBossKillsDifficultyTick) {
+						this.IncrementPlayerDifficulty(player, "bosses");
+						diff.setBossesKilled(0);
+					}
 				}
-			} else {
-				Integer killedCount = BossEntitiesKilled.get(player);
-				killedCount++;
-				if (killedCount >= GeneralSettings.playerBossKillsDifficultyTick) {
-					IncrementPlayerDifficulty(player, "bosses");
-					killedCount = 0;
-				}
-				BossEntitiesKilled.replace(player, killedCount);
 			}
 		}
 		RemoveEntity(entity);
