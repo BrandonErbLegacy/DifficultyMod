@@ -22,11 +22,9 @@ import nightwraid.diff.effects.stats.StatGainKRESIST;
 import nightwraid.diff.effects.stats.StatGainSPD;
 import nightwraid.diff.effects.stats.StatGainSTR;
 import nightwraid.diff.general.DifficultyMod;
-import nightwraid.diff.network.DifficultySyncPacket;
 import nightwraid.diff.settings.EntitySettings;
 import nightwraid.diff.settings.GeneralSettings;
 import nightwraid.diff.utils.LogHelper;
-import nightwraid.diff.utils.ModifierNames;
 
 public class EffectManager {
 	/* Register our effects and etc for use */
